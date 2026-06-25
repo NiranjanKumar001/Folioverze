@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" style="overflow: hidden">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Lumina | Elite Digital Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+
+  <script type="importmap">
+    {
+      "imports": {
+        "gsap": "https://esm.sh/gsap",
+        "gsap/Flip": "https://esm.sh/gsap/Flip",
+        "gsap/SplitText": "https://esm.sh/gsap/SplitText",
+        "gsap/Draggable": "https://esm.sh/gsap/Draggable",
+        "gsap/ScrollTrigger": "https://esm.sh/gsap/ScrollTrigger",
+        "lenis": "https://esm.sh/lenis"
+      }
+    }
+  </script>
+  <script>
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+  </script>
+</head>
+<body style="overflow: hidden">
+
+  <div class="custom-cursor"></div>
+  <div class="custom-cursor-follower"><span class="follower-text">drag</span></div>
+
+  <section class="hero" id="home">
+
+    <div class="hero-bg"></div>
+    <video class="video-bg" autoplay loop muted playsinline>
+      <source src="./video.mp4" type="video/mp4" />
+    </video>
+
+    <div class="counter">
+      <div class="counter-1 digit"></div>
+      <div class="counter-2 digit"></div>
+      <div class="counter-3 digit"></div>
+    </div>
+
+    <div class="images-container">
+      <div class="img"><img src="./img1.png" alt="" /></div>
+      <div class="img"><img src="./img2.png" alt="" /></div>
+      <div class="img"><img src="./img3.png" alt="" /></div>
+      <div class="img"><img src="./img4.png" alt="" /></div>
+      <div class="img"><img src="./img5.png" alt="" /></div>
+      <div class="img"><img src="./img6.png" alt="" /></div>
+      <div class="img"><img src="./img7.png" alt="" /></div>
+      <div class="img"><img src="./img8.png" alt="" /></div>
+      <div class="img"><img src="./img9.png" alt="" /></div>
+      <div class="img"><img src="./img10.png" alt="" /></div>
+      <div class="img"><img src="./img11.png" alt="" /></div>
+      <div class="img"><img src="./img12.png" alt="" /></div>
+      <div class="img"><img src="./img13.png" alt="" /></div>
+      <div class="img"><img src="./img14.png" alt="" /></div>
+      <div class="img"><img src="./img15.png" alt="" /></div>
+    </div>
+
+    <!-- inferred position from screenshots -->
+    <nav>
+      <div class="logo-group">
+        <div class="logo magnetic">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+            <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="8" />
+            <circle cx="50" cy="50" r="20" fill="currentColor" />
+          </svg>
+        </div>
+        <div class="logo-name magnetic">
+          <a href="#">Aura</a>
+        </div>
+      </div>
+
+      <div class="links">
+        <div class="nav-active-pill"></div>
+        <a href="#home" class="active">Home</a>
+        <a href="#work">Work</a>
+        <a href="#services">Services</a>
+        <a href="#studio">Studio</a>
+      </div>
+
+      <div class="cta magnetic">
+        <a href="#">
+          <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
+          </svg>
+          <span>Contact us</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="header">
+      <h1>We engineer high-end sensory digital experiences</h1>
+    </div>
+
+    <div class="site-info">
+      <h2>
+        An elite digital production studio collaborating with progressive brands globally.
+      </h2>
+
+      <div class="site-info-copy">
+        <p>Interactive &amp; Visual Design</p>
+        <p>EST. 2026 / TOKYO — LONDON</p>
+      </div>
+    </div>
+
+    <div class="hero-footer">
+      <div class="play-btn">
+        <svg viewBox="0 0 30 30" fill="currentColor">
+          <path d="M6 6v20l16-10z" />
+        </svg>
+      </div>
+      <h2>Play Showreel (0:58)</h2>
+    </div>
+
+  </section>
+
+  <div class="scroll-sections" id="work">
+    
+    <div class="marquee-strip">
+      <div class="marquee-content">
+        <span>LUMINA • DIGITAL • STUDIO • TOKYO • LONDON • </span>
+        <span>LUMINA • DIGITAL • STUDIO • TOKYO • LONDON • </span>
+        <span>LUMINA • DIGITAL • STUDIO • TOKYO • LONDON • </span>
+        <span>LUMINA • DIGITAL • STUDIO • TOKYO • LONDON • </span>
+      </div>
+    </div>
+
+    <div class="section-heading">
+      <h2 class="reveal-text">SELECTED <br/> WORKS</h2>
+      <p class="reveal-fade">(05) RECENT PROJECTS</p>
+    </div>
+
+    <section class="work-item">
+        <div class="work-item-img">
+            <img src="./img1.png" alt="" />
+        </div>
+        <div class="work-item-name">
+            <h1>Lumina Agency</h1>
+        </div>
+    </section>
+
+    <section class="work-item">
+        <div class="work-item-img">
+            <img src="./img2.png" alt="" />
+        </div>
+        <div class="work-item-name">
+            <h1>Noir & Sens</h1>
+        </div>
+    </section>
+
+    <section class="work-item">
+        <div class="work-item-img">
+            <img src="./img3.png" alt="" />
+        </div>
+        <div class="work-item-name">
+            <h1>Quantum Dex</h1>
+        </div>
+    </section>
+
+    <section class="work-item">
+        <div class="work-item-img">
+            <img src="./img4.png" alt="" />
+        </div>
+        <div class="work-item-name">
+            <h1>Nova Architects</h1>
+        </div>
+    </section>
+
+    <section class="work-item">
+        <div class="work-item-img">
+            <img src="./img5.png" alt="" />
+        </div>
+        <div class="work-item-name">
+            <h1>Cybernetic Dreams</h1>
+        </div>
+    </section>
+
+    <section class="outro">
+        <h1>Back to base</h1>
+    </section>
+  </div>
+
+  <div class="fullscreen-viewer">
+    <div class="viewer-bg"></div>
+    <div class="viewer-content"></div>
+    <div class="viewer-info">
+      <div class="viewer-title">Clear Gaze</div>
+      <div class="viewer-help">Scroll or drag to explore</div>
+    </div>
+    <button class="viewer-close magnetic">
+      <span>Close</span>
+    </button>
+  </div>
+
+
+  <script type="module" src="./script.js"></script>
+
+</body>
+</html>
+
+
