@@ -459,20 +459,21 @@ const initInteractiveFeatures = () => {
     }
   };
 
+  // Continuous high-performance smooth slider loop
+  gsap.ticker.add(() => {
+    if (!isZoomed) return;
+    const diff = sliderTargetProgress - sliderCurrentProgress;
+    if (Math.abs(diff) > 0.001) {
+      sliderCurrentProgress += diff * 0.12; // Decelerates smoothly to target progress
+      updateSliderPosition(sliderCurrentProgress);
+    } else if (sliderCurrentProgress !== sliderTargetProgress) {
+      sliderCurrentProgress = sliderTargetProgress;
+      updateSliderPosition(sliderCurrentProgress);
+    }
+  });
+
   const animateProgress = (targetVal) => {
-    sliderTargetProgress = targetVal; // No clamping! Let it loop infinitely!
-
-    if (sliderTween) sliderTween.kill();
-
-    sliderTween = gsap.to({ val: sliderCurrentProgress }, {
-      val: sliderTargetProgress,
-      duration: 0.6,
-      ease: "power3.out",
-      onUpdate: function() {
-        sliderCurrentProgress = this.targets()[0].val;
-        updateSliderPosition(sliderCurrentProgress);
-      }
-    });
+    sliderTargetProgress = targetVal; // Ticker automatically handles the interpolation
   };
 
   // Event Listeners for Slider Manipulation
@@ -480,14 +481,14 @@ const initInteractiveFeatures = () => {
     if (!isZoomed) return;
     e.preventDefault();
     const delta = Math.max(-0.5, Math.min(0.5, e.deltaY * 0.003));
-    animateProgress(sliderTargetProgress + delta);
+    sliderTargetProgress += delta;
   };
 
   viewer.addEventListener("wheel", handleWheel, { passive: false });
 
   // Custom Touch and Mouse drag control
+  // Custom Touch and Mouse drag control
   let isDragging = false;
-  let isTransitioning = false;
   let dragStartX = 0;
   let dragStartY = 0;
   let dragStartProgress = 0;
@@ -495,10 +496,6 @@ const initInteractiveFeatures = () => {
   const handleDragStart = (e) => {
     if (!isZoomed) return;
     isDragging = true;
-    isTransitioning = false;
-    
-    // Kill active transitions immediately so drag takes over instantly
-    if (sliderTween) sliderTween.kill();
     
     const isTouch = e.touches && e.touches.length > 0;
     if (isTouch) {
@@ -508,7 +505,7 @@ const initInteractiveFeatures = () => {
       dragStartX = e.clientX;
     }
     
-    dragStartProgress = sliderCurrentProgress;
+    dragStartProgress = sliderTargetProgress;
     document.body.classList.add("hovering-image");
     if (followerText) followerText.textContent = "spin";
   };
@@ -517,44 +514,30 @@ const initInteractiveFeatures = () => {
     if (!isDragging || !isZoomed) return;
     
     const isTouch = e.touches && e.touches.length > 0;
+    let deltaProgress = 0;
+    
     if (isTouch) {
       e.preventDefault();
-      if (isTransitioning) return; // Wait for release before next swipe
-      
       const currentY = e.touches[0].clientY;
       const dy = currentY - dragStartY;
-      
-      const threshold = 40; // Swipe sensitivity threshold in pixels
-      if (dy < -threshold) {
-        isTransitioning = true;
-        animateProgress(sliderTargetProgress + 1); // Swipe Up -> Next image
-      } else if (dy > threshold) {
-        isTransitioning = true;
-        animateProgress(sliderTargetProgress - 1); // Swipe Down -> Previous image
-      }
+      deltaProgress = -dy / 200; // Responsive tracking of vertical swipes (200px = 1 step)
     } else {
       const currentX = e.clientX;
       const dx = currentX - dragStartX;
-      const deltaProgress = -dx / 250;
-      
-      sliderCurrentProgress = dragStartProgress + deltaProgress;
-      sliderTargetProgress = sliderCurrentProgress;
-      updateSliderPosition(sliderCurrentProgress);
+      deltaProgress = -dx / 250;
     }
+    
+    sliderTargetProgress = dragStartProgress + deltaProgress;
   };
 
   const handleDragEnd = () => {
     if (!isDragging) return;
     isDragging = false;
-    isTransitioning = false;
     document.body.classList.remove("hovering-image");
     if (followerText) followerText.textContent = "drag";
     
-    // On desktop drag release, snap smoothly to nearest index
-    if (sliderCurrentProgress !== sliderTargetProgress) {
-      const nearestIndex = Math.round(sliderCurrentProgress);
-      animateProgress(nearestIndex);
-    }
+    // Snap smoothly to the nearest index on release
+    sliderTargetProgress = Math.round(sliderTargetProgress);
   };
 
   viewerContent.addEventListener("mousedown", handleDragStart);
