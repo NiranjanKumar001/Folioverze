@@ -466,8 +466,8 @@ const initInteractiveFeatures = () => {
 
     sliderTween = gsap.to({ val: sliderCurrentProgress }, {
       val: sliderTargetProgress,
-      duration: 0.75,
-      ease: "power2.out",
+      duration: 0.6,
+      ease: "power3.out",
       onUpdate: function() {
         sliderCurrentProgress = this.targets()[0].val;
         updateSliderPosition(sliderCurrentProgress);
@@ -487,6 +487,7 @@ const initInteractiveFeatures = () => {
 
   // Custom Touch and Mouse drag control
   let isDragging = false;
+  let isTransitioning = false;
   let dragStartX = 0;
   let dragStartY = 0;
   let dragStartProgress = 0;
@@ -494,8 +495,9 @@ const initInteractiveFeatures = () => {
   const handleDragStart = (e) => {
     if (!isZoomed) return;
     isDragging = true;
+    isTransitioning = false;
     
-    // Kill any active transitions immediately to prevent fighting the user
+    // Kill active transitions immediately so drag takes over instantly
     if (sliderTween) sliderTween.kill();
     
     const isTouch = e.touches && e.touches.length > 0;
@@ -506,7 +508,7 @@ const initInteractiveFeatures = () => {
       dragStartX = e.clientX;
     }
     
-    dragStartProgress = sliderCurrentProgress; // Use actual current progress
+    dragStartProgress = sliderCurrentProgress;
     document.body.classList.add("hovering-image");
     if (followerText) followerText.textContent = "spin";
   };
@@ -515,35 +517,44 @@ const initInteractiveFeatures = () => {
     if (!isDragging || !isZoomed) return;
     
     const isTouch = e.touches && e.touches.length > 0;
-    let deltaProgress = 0;
-    
     if (isTouch) {
       e.preventDefault();
+      if (isTransitioning) return; // Wait for release before next swipe
+      
       const currentY = e.touches[0].clientY;
       const dy = currentY - dragStartY;
-      deltaProgress = -dy / 250; // Increased to 250px for a more controlled, smoother swipe feel
+      
+      const threshold = 40; // Swipe sensitivity threshold in pixels
+      if (dy < -threshold) {
+        isTransitioning = true;
+        animateProgress(sliderTargetProgress + 1); // Swipe Up -> Next image
+      } else if (dy > threshold) {
+        isTransitioning = true;
+        animateProgress(sliderTargetProgress - 1); // Swipe Down -> Previous image
+      }
     } else {
       const currentX = e.clientX;
       const dx = currentX - dragStartX;
-      deltaProgress = -dx / 250;
+      const deltaProgress = -dx / 250;
+      
+      sliderCurrentProgress = dragStartProgress + deltaProgress;
+      sliderTargetProgress = sliderCurrentProgress;
+      updateSliderPosition(sliderCurrentProgress);
     }
-    
-    // Directly update the position 1:1 with finger tracking
-    sliderCurrentProgress = dragStartProgress + deltaProgress;
-    sliderTargetProgress = sliderCurrentProgress;
-    
-    updateSliderPosition(sliderCurrentProgress);
   };
 
   const handleDragEnd = () => {
     if (!isDragging) return;
     isDragging = false;
+    isTransitioning = false;
     document.body.classList.remove("hovering-image");
     if (followerText) followerText.textContent = "drag";
     
-    // Smoothly snap to the nearest index on release
-    const nearestIndex = Math.round(sliderCurrentProgress);
-    animateProgress(nearestIndex);
+    // On desktop drag release, snap smoothly to nearest index
+    if (sliderCurrentProgress !== sliderTargetProgress) {
+      const nearestIndex = Math.round(sliderCurrentProgress);
+      animateProgress(nearestIndex);
+    }
   };
 
   viewerContent.addEventListener("mousedown", handleDragStart);
