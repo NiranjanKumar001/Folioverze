@@ -441,7 +441,7 @@ nav {
 .work-item {
   position: relative;
   width: 100vw;
-  height: 150svh;
+  height: 100svh;
   overflow: hidden;
 }
 

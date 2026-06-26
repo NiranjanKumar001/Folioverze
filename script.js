@@ -7,7 +7,10 @@ import Lenis from "lenis";
 
 gsap.registerPlugin(Flip, SplitText, Draggable, ScrollTrigger);
 
-document.body.style.overflow = "hidden"; // Disable scroll during initial animation
+document.documentElement.style.overflow = "hidden";
+document.documentElement.style.height = "100%";
+document.body.style.overflow = "hidden";
+document.body.style.height = "100%";
 
 const setupTextSplitting = () => {
   const textElements = document.querySelectorAll(".hero h1, .hero h2, .hero p, .hero a:not(.cta a), .header h1, .site-info p, .hero-footer h2");
@@ -257,11 +260,16 @@ tl.eventCallback("onComplete", () => {
 });
 
 const initInteractiveFeatures = () => {
-  // 1. Activate Custom Cursor
-  document.body.classList.add("custom-cursor-active");
+  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+  // Initialize DOM elements for custom cursor (so they don't cause ReferenceErrors when referenced elsewhere)
   const cursor = document.querySelector(".custom-cursor");
   const follower = document.querySelector(".custom-cursor-follower");
-  const followerText = follower.querySelector(".follower-text");
+  const followerText = follower ? follower.querySelector(".follower-text") : null;
+
+  if (!isTouchDevice) {
+    // 1. Activate Custom Cursor
+    document.body.classList.add("custom-cursor-active");
 
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight / 2;
@@ -361,38 +369,11 @@ const initInteractiveFeatures = () => {
       ease: "power2.out"
     });
   });
+  } // End of !isTouchDevice block
 
-  // 5. Kinetic Draggable Images with double-click zoom
-  let maxZIndex = 10;
+  // 5. Hero Images State Variables
   let isZoomed = false;
 
-  const draggables = Draggable.create(".img", {
-    type: "x,y",
-    bounds: ".hero",
-    edgeResistance: 0.7,
-    onPress: function() {
-      if (isZoomed) return;
-      gsap.set(this.target, { zIndex: ++maxZIndex });
-      document.body.classList.add("hovering-image");
-      followerText.textContent = "hold";
-    },
-    onRelease: function() {
-      document.body.classList.remove("hovering-image");
-      followerText.textContent = "zoom";
-    },
-    onDragEnd: function() {
-      // Kinetic inertia throw slide
-      const speedX = this.getVelocity("x");
-      const speedY = this.getVelocity("y");
-      
-      gsap.to(this.target, {
-        x: `+=${speedX * 0.12}`,
-        y: `+=${speedY * 0.12}`,
-        duration: 0.8,
-        ease: "power2.out"
-      });
-    }
-  });
 
   // Curved Semi-Circular Image Slider
   const viewer = document.querySelector(".fullscreen-viewer");
@@ -541,14 +522,14 @@ const initInteractiveFeatures = () => {
   window.addEventListener("touchmove", handleDragMove, { passive: true });
   window.addEventListener("touchend", handleDragEnd);
 
-  // Opening the Semi-Circular Viewer
+  // Opening the Semi-Circular Viewer on Double Click / Double Tap
   allImages.forEach((img, idx) => {
-    img.addEventListener("dblclick", () => {
+    let lastTap = 0;
+
+    const openSlider = (e) => {
+      if (e) e.preventDefault();
       if (isZoomed) return;
       isZoomed = true;
-
-      // Disable landing page dragging
-      draggables.forEach(d => d.disable());
 
       // Save starting layout state
       const state = Flip.getState(allImages);
@@ -591,6 +572,19 @@ const initInteractiveFeatures = () => {
       document.body.classList.remove("hovering-image");
       document.body.classList.add("hovering-link");
       followerText.textContent = "close";
+    };
+
+    // Standard Desktop Double Click
+    img.addEventListener("dblclick", openSlider);
+
+    // Custom Mobile Double Tap
+    img.addEventListener("touchend", (e) => {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
+      if (tapLength > 0 && tapLength < 400) {
+        openSlider(e);
+      }
+      lastTap = currentTime;
     });
   });
 
@@ -616,8 +610,6 @@ const initInteractiveFeatures = () => {
     // Reset styles back to stylesheet defaults
     gsap.set(allImages, { clearProps: "all" });
 
-    // Enable dragging
-    draggables.forEach(d => d.enable());
     isZoomed = false;
 
     // Hide viewer overlay
@@ -716,8 +708,10 @@ const initNavPill = () => {
 };
 
 const initScrollAnimations = () => {
-  document.documentElement.style.overflow = ""; // Re-enable HTML scroll
-  document.body.style.overflow = ""; // Re-enable Body scroll now that the hero animation is done
+  document.documentElement.style.overflow = "";
+  document.documentElement.style.height = "";
+  document.body.style.overflow = "";
+  document.body.style.height = "";
 
   const lenis = new Lenis();
   window.globalLenis = lenis;
