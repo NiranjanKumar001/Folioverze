@@ -942,14 +942,41 @@ const initScrollAnimations = () => {
       scrollTrigger: {
         trigger: ".sticky-cards",
         start: "top top",
-        end: `+=${window.innerHeight * 4}px`,
+        end: `+=${window.innerHeight * 3}px`,
         pin: true,
         pinSpacing: true,
         scrub: 1,
+        onUpdate: (self) => {
+          const progress = self.progress;
+          // Update vertical progress track height
+          gsap.set(".services-timeline .timeline-progress", { height: `${progress * 100}%` });
+          
+          // Calculate which of the 4 cards is active based on 3 intervals
+          let activeIndex = 0;
+          if (progress < 0.25) {
+            activeIndex = 0;
+          } else if (progress < 0.58) {
+            activeIndex = 1;
+          } else if (progress < 0.90) {
+            activeIndex = 2;
+          } else {
+            activeIndex = 3;
+          }
+          
+          // Toggle active class on sidebar navigation numbers
+          document.querySelectorAll(".services-sidebar .sidebar-pill").forEach((pill, i) => {
+            pill.classList.toggle("active", i === activeIndex);
+          });
+          
+          // Toggle active class on timeline track indicator dots
+          document.querySelectorAll(".services-timeline .dot").forEach((dot, i) => {
+            dot.classList.toggle("active", i === activeIndex);
+          });
+        }
       }
     });
 
-    for (let i = 0; i < totalCards; i++) {
+    for (let i = 0; i < totalCards - 1; i++) {
       const stepLabel = `step-${i}`;
       tlCards.add(stepLabel);
 
@@ -976,6 +1003,30 @@ const initScrollAnimations = () => {
         }, stepLabel);
       }
     }
+
+    // --- Services Sidebar & Timeline Clicking ---
+    const handleIndicatorClick = (index) => {
+      const trigger = tlCards.scrollTrigger;
+      if (trigger) {
+        const scrollStart = trigger.start;
+        const targetScroll = scrollStart + index * window.innerHeight;
+        if (window.globalLenis) {
+          window.globalLenis.scrollTo(targetScroll, { duration: 1.2 });
+        } else {
+          window.scrollTo({ top: targetScroll, behavior: "smooth" });
+        }
+      }
+    };
+
+    document.querySelectorAll(".services-sidebar .sidebar-pill").forEach((pill, i) => {
+      pill.style.cursor = "pointer";
+      pill.addEventListener("click", () => handleIndicatorClick(i));
+    });
+
+    document.querySelectorAll(".services-timeline .dot").forEach((dot, i) => {
+      dot.style.cursor = "pointer";
+      dot.addEventListener("click", () => handleIndicatorClick(i));
+    });
   }
 
   // --- Outro Clocks & Scroll to Top ---
