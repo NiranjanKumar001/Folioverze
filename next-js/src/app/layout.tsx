@@ -1,8 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  themeColor: "#F2F0F8",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.folioverze.com"),
+  alternates: { canonical: "https://www.folioverze.com" },
   title: "Folioverze | Software & Tech Agency",
   description:
     "Folioverze is a freelance software & tech agency building premium websites, automations, AI integrations, and internal tools — from Assam, India.",
@@ -55,6 +60,37 @@ export default function RootLayout({
         />
       </head>
       <body style={{ overflow: 'hidden' }}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Folioverze",
+              url: "https://www.folioverze.com",
+              logo: "https://www.folioverze.com/icon-512.png",
+              image: "https://www.folioverze.com/opengraph-image.png",
+              description:
+                "Freelance software & tech agency building premium websites, automations, AI integrations, and internal tools.",
+              email: "hello@folioverze.com",
+              foundingDate: "2026",
+              address: {
+                "@type": "PostalAddress",
+                addressRegion: "Assam",
+                addressCountry: "IN",
+              },
+              areaServed: "Worldwide",
+              knowsAbout: [
+                "Web Development",
+                "Automation",
+                "AI Integration",
+                "Internal Tools",
+                "Next.js",
+                "React",
+              ],
+            }),
+          }}
+        />
         {children}
       </body>
     </html>
