@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { Draggable } from "gsap/Draggable";
@@ -34,6 +34,7 @@ class CustomSplitText {
 
     this.elements.forEach(el => {
       const originalText = el.textContent || "";
+      if (!originalText.trim()) return; // nothing to split (e.g. image-only logo) — don't wipe children
       el.innerHTML = ""; // Clear
 
       if (doLines) {
@@ -115,6 +116,50 @@ class CustomSplitText {
 }
 
 export default function Home() {
+  const [quoteOpen, setQuoteOpen] = useState(false);
+  const [formStatus, setFormStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+
+  // Web3Forms — no backend needed. Key is public by design (fine to hardcode).
+  const handleContactSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    formData.append("access_key", "5d25a5e3-bef3-408d-a6f7-eaae062f5583");
+    setFormStatus("sending");
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFormStatus("success");
+        form.reset();
+      } else {
+        setFormStatus("error");
+      }
+    } catch {
+      setFormStatus("error");
+    }
+  };
+
+  // Modal open/close side-effects: lock scroll (Lenis + body) and close on Escape.
+  useEffect(() => {
+    if (!quoteOpen) return;
+    setFormStatus("idle");
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setQuoteOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    window.globalLenis?.stop();
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.globalLenis?.start();
+      document.body.style.overflow = "";
+    };
+  }, [quoteOpen]);
+
   useEffect(() => {
     // Register plugins
     gsap.registerPlugin(Flip, Draggable, ScrollTrigger);
@@ -123,7 +168,7 @@ export default function Home() {
 
     const setupTextSplitting = () => {
       const textElements = document.querySelectorAll(
-        ".hero h1, .hero h2, .hero p, .hero a:not(.cta a), .header h1, .site-info p, .hero-footer h2"
+        ".hero h1, .hero h2, .hero p, .hero a:not(.cta a):not(.logo), .header h1, .site-info p, .hero-footer h2"
       );
 
       textElements.forEach((element) => {
@@ -144,6 +189,12 @@ export default function Home() {
     };
 
     const createCounterDigits = () => {
+      // Idempotent: clear first so hot-reload / StrictMode re-runs don't stack duplicate digits
+      // (duplicates break the counter's travel distance and freeze the intro loader).
+      document.querySelectorAll(".counter-1, .counter-2, .counter-3").forEach((c) => {
+        c.innerHTML = "";
+      });
+
       const counter1 = document.querySelector(".counter-1");
       if (counter1) {
         const num0 = document.createElement("div");
@@ -293,7 +344,7 @@ export default function Home() {
     );
 
     tl.to(
-      [".logo-name a span", ".links a span", ".links p span", ".cta a"],
+      [".links a span", ".links p span", ".cta a"],
       {
         y: "0%",
         opacity: 1,
@@ -817,7 +868,13 @@ export default function Home() {
       window.globalLenis = lenis;
 
       lenis.on("scroll", ScrollTrigger.update);
-      
+
+      // Frosted bar behind the nav once scrolled, so the brand stays legible over dark sections
+      const navEl = document.querySelector("nav");
+      lenis.on("scroll", ({ scroll }: { scroll: number }) => {
+        if (navEl) navEl.classList.toggle("scrolled", scroll > 80);
+      });
+
       tickerLenisFn = (time: number) => {
         lenis.raf(time * 1000);
       };
@@ -1029,13 +1086,13 @@ export default function Home() {
         const updateTimes = () => {
           const now = new Date();
           tokyoTimeEl.textContent = now.toLocaleTimeString("en-US", {
-            timeZone: "Asia/Tokyo",
+            timeZone: "Asia/Kolkata",
             hour: "2-digit",
             minute: "2-digit",
             hour12: true
           });
           londonTimeEl.textContent = now.toLocaleTimeString("en-US", {
-            timeZone: "Europe/London",
+            timeZone: "UTC",
             hour: "2-digit",
             minute: "2-digit",
             hour12: true
@@ -1058,6 +1115,11 @@ export default function Home() {
           }
         });
       }
+
+      // The nav active-tab triggers (initNavPill) were created during the intro,
+      // before the pinned Services section existed — so their positions are stale.
+      // Recompute all ScrollTrigger positions now that pinning/layout is finalized.
+      ScrollTrigger.refresh();
     };
 
     return () => {
@@ -1069,6 +1131,9 @@ export default function Home() {
       if (tickerMarqueeFn) gsap.ticker.remove(tickerMarqueeFn);
       if (lenisInstance) lenisInstance.destroy();
       ScrollTrigger.getAll().forEach(t => t.kill());
+      // Kill the intro timeline so hot-reload / StrictMode re-mounts don't run
+      // overlapping timelines that fight over the same elements.
+      tl.kill();
     };
   }, []);
 
@@ -1110,15 +1175,10 @@ export default function Home() {
 
         <nav>
           <div className="logo-group">
-            <div className="logo magnetic">
-              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
-                <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" />
-                <circle cx="50" cy="50" r="20" fill="currentColor" />
-              </svg>
-            </div>
-            <div className="logo-name magnetic">
-              <a href="#">Aura</a>
-            </div>
+            <a href="https://www.folioverze.com/" className="logo magnetic" aria-label="Folioverze — home">
+              <img src="/logo-mark.svg" alt="" className="logo-mark" />
+              <span className="logo-word">olioverze</span>
+            </a>
           </div>
 
           <div className="links">
@@ -1126,11 +1186,11 @@ export default function Home() {
             <a href="#home" className="active">Home</a>
             <a href="#work">Work</a>
             <a href="#services">Services</a>
-            <a href="#studio">Studio</a>
+            <a href="#about">About</a>
           </div>
 
           <div className="cta magnetic">
-            <a href="#">
+            <a href="#" onClick={(e) => { e.preventDefault(); setQuoteOpen(true); }}>
               <svg className="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="7" y1="17" x2="17" y2="7"></line>
                 <polyline points="7 7 17 7 17 17"></polyline>
@@ -1142,14 +1202,14 @@ export default function Home() {
 
         <div className="hero-main-content">
           <div className="header">
-            <h1>We engineer high-end sensory digital experiences</h1>
+            <h1>We build premium software, automations &amp; AI for ambitious teams</h1>
           </div>
 
           <div className="site-info">
-            <h2>An elite digital production studio collaborating with progressive brands globally.</h2>
+            <h2>A freelance software &amp; tech agency partnering with founders and teams to ship premium products — fast.</h2>
             <div className="site-info-copy">
-              <p>Interactive &amp; Visual Design</p>
-              <p>EST. 2026 / TOKYO — LONDON</p>
+              <p>Software &amp; AI Engineering</p>
+              <p>EST. 2026 / ASSAM, INDIA</p>
             </div>
           </div>
         </div>
@@ -1168,61 +1228,37 @@ export default function Home() {
       <div className="scroll-sections" id="work">
         <div className="marquee-strip">
           <div className="marquee-content">
-            <span>LUMINA • DIGITAL • STUDIO • TOKYO • LONDON • </span>
-            <span>LUMINA • DIGITAL • STUDIO • TOKYO • LONDON • </span>
-            <span>LUMINA • DIGITAL • STUDIO • TOKYO • LONDON • </span>
-            <span>LUMINA • DIGITAL • STUDIO • TOKYO • LONDON • </span>
+            <span>FOLIOVERZE • SOFTWARE • AUTOMATION • AI • ASSAM • INDIA • </span>
+            <span>FOLIOVERZE • SOFTWARE • AUTOMATION • AI • ASSAM • INDIA • </span>
+            <span>FOLIOVERZE • SOFTWARE • AUTOMATION • AI • ASSAM • INDIA • </span>
+            <span>FOLIOVERZE • SOFTWARE • AUTOMATION • AI • ASSAM • INDIA • </span>
           </div>
         </div>
 
         <div className="section-heading">
           <h2 className="reveal-text">SELECTED <br/> WORKS</h2>
-          <p className="reveal-fade">(05) RECENT PROJECTS</p>
+          <p className="reveal-fade">(01) FEATURED PROJECT</p>
         </div>
 
         <section className="work-item">
-          <div className="work-item-img">
-            <img src="/img1.webp" alt="" />
-          </div>
-          <div className="work-item-name">
-            <h1>Lumina Agency</h1>
-          </div>
-        </section>
-
-        <section className="work-item">
-          <div className="work-item-img">
-            <img src="/img2.webp" alt="" />
-          </div>
-          <div className="work-item-name">
-            <h1>Noir &amp; Sens</h1>
-          </div>
-        </section>
-
-        <section className="work-item">
-          <div className="work-item-img">
-            <img src="/img3.webp" alt="" />
-          </div>
-          <div className="work-item-name">
-            <h1>Quantum Dex</h1>
-          </div>
-        </section>
-
-        <section className="work-item">
-          <div className="work-item-img">
-            <img src="/img4.webp" alt="" />
-          </div>
-          <div className="work-item-name">
-            <h1>Nova Architects</h1>
-          </div>
-        </section>
-
-        <section className="work-item">
-          <div className="work-item-img">
-            <img src="/img5.webp" alt="" />
-          </div>
-          <div className="work-item-name">
-            <h1>Cybernetic Dreams</h1>
-          </div>
+          <a
+            href="https://www.drokpa.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="work-item-link"
+            aria-label="Drokpa — visit the live site (opens in a new tab)"
+          >
+            <div className="work-item-img">
+              <img
+                src="/work-drokpa.webp"
+                alt="Drokpa travel platform homepage — snow-capped mountains in Arunachal Pradesh framed by prayer flags, with trek booking and itinerary tools"
+              />
+            </div>
+            <div className="work-item-name">
+              <h1>Drokpa</h1>
+              <span className="work-item-meta">Travel &amp; Trek Platform ↗</span>
+            </div>
+          </a>
         </section>
       </div>
 
@@ -1230,8 +1266,8 @@ export default function Home() {
       <div className="section-intersection-divider" id="services">
         <div className="divider-dots"></div>
         <div className="section-heading">
-          <h2 className="reveal-text">SERVICES &amp;<br/>EXPERTISE</h2>
-          <p className="reveal-fade">(06) WHAT WE DO</p>
+          <h2 className="reveal-text">SERVICES &amp; <br/> EXPERTISE</h2>
+          <p className="reveal-fade">(02) WHAT WE DO</p>
         </div>
       </div>
 
@@ -1266,157 +1302,376 @@ export default function Home() {
         {/* Card 1 */}
         <div className="card" id="card-1">
           <div className="card-header">
-            <h1>Creative Brand Strategy</h1>
+            <h1>Premium Websites</h1>
             <div className="card-index">(01)</div>
           </div>
-          
+
           <p className="card-desc">
-            We clarify your positioning, define a distinctive brand tone of voice, and build visual systems that work seamlessly across digital products and global campaigns.
+            We design and build fast, high-end marketing sites and web apps — pixel-perfect, SEO-ready, and engineered to convert.
           </p>
+          <ul className="card-tags">
+            <li>Next.js</li>
+            <li>SEO-ready</li>
+            <li>Headless CMS</li>
+            <li>Blazing fast</li>
+          </ul>
 
-          <div className="card-details">
-            <div className="card-testimonial">
-              <blockquote>
-                &quot;The rebranding completely redefined how our brand was perceived by investors. The attention to typography and motion was outstanding.&quot;
-              </blockquote>
-              <div className="testimonial-author">
-                <img src="/img5.webp" alt="Elena Rostova" />
-                <div className="author-info">
-                  <span className="name">Elena Rostova</span>
-                  <span className="role">CEO at Vektor</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-gallery">
-              <div className="gallery-item">
-                <img src="/img1.webp" alt="Showcase 1" />
-              </div>
-              <div className="gallery-item">
-                <img src="/img6.webp" alt="Showcase 2" />
-              </div>
-              <div className="gallery-item">
-                <img src="/img7.webp" alt="Showcase 3" />
-              </div>
-            </div>
+          <div className="card-visual">
+            <svg viewBox="0 0 210 150" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="4" y="6" width="202" height="138" rx="10" strokeWidth="2.5" />
+              <path d="M4 32 H206" strokeWidth="2.5" />
+              <circle cx="16" cy="19" r="2.5" fill="currentColor" stroke="none" />
+              <circle cx="26" cy="19" r="2.5" fill="currentColor" stroke="none" />
+              <circle cx="36" cy="19" r="2.5" fill="currentColor" stroke="none" />
+              <rect x="74" y="15" width="116" height="8" rx="4" fill="currentColor" stroke="none" opacity="0.25" />
+              <rect x="18" y="46" width="86" height="11" rx="3" fill="currentColor" stroke="none" opacity="0.9" />
+              <rect x="18" y="63" width="128" height="9" rx="3" fill="currentColor" stroke="none" opacity="0.45" />
+              <rect x="18" y="82" width="52" height="17" rx="8.5" fill="currentColor" stroke="none" />
+              <rect x="18" y="110" width="54" height="26" rx="5" strokeWidth="2" />
+              <rect x="79" y="110" width="54" height="26" rx="5" strokeWidth="2" />
+              <rect x="140" y="110" width="54" height="26" rx="5" strokeWidth="2" />
+            </svg>
           </div>
         </div>
 
         {/* Card 2 */}
         <div className="card" id="card-2">
           <div className="card-header">
-            <h1>Interactive Development</h1>
+            <h1>Automations &amp; Workflows</h1>
             <div className="card-index">(02)</div>
           </div>
-          
+
           <p className="card-desc">
-            We design and code bespoke digital interfaces with smooth scroll, fluid WebGL effects, high-performance interactions, and rich animations.
+            We connect your tools and automate the repetitive work — from data syncs to onboarding — so your team ships faster with fewer mistakes.
           </p>
+          <ul className="card-tags">
+            <li>n8n / Zapier</li>
+            <li>API integrations</li>
+            <li>Data sync</li>
+            <li>Scheduled jobs</li>
+          </ul>
 
-          <div className="card-details">
-            <div className="card-testimonial">
-              <blockquote>
-                &quot;Their technical prowess in GSAP and WebGL transformed our design system into an immersive digital journey. Unmatched expertise.&quot;
-              </blockquote>
-              <div className="testimonial-author">
-                <img src="/img8.webp" alt="Marcus Thorne" />
-                <div className="author-info">
-                  <span className="name">Marcus Thorne</span>
-                  <span className="role">Head of Tech at Aether</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-gallery">
-              <div className="gallery-item">
-                <img src="/img2.webp" alt="Showcase 1" />
-              </div>
-              <div className="gallery-item">
-                <img src="/img9.webp" alt="Showcase 2" />
-              </div>
-              <div className="gallery-item">
-                <img src="/img10.webp" alt="Showcase 3" />
-              </div>
-            </div>
+          <div className="card-visual">
+            <svg viewBox="0 0 210 150" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="10" y="22" width="66" height="34" rx="9" strokeWidth="2.5" />
+              <circle cx="27" cy="39" r="6" strokeWidth="2" />
+              <rect x="40" y="36" width="28" height="6" rx="3" fill="currentColor" stroke="none" opacity="0.6" />
+              <path d="M76 39 H104" strokeWidth="2.5" />
+              <path d="M98 34 L104 39 L98 44" strokeWidth="2.5" />
+              <rect x="104" y="22" width="66" height="34" rx="9" strokeWidth="2.5" />
+              <circle cx="137" cy="39" r="8" strokeWidth="2" />
+              <path d="M137 29 V33 M137 45 V49 M127 39 H131 M143 39 H147" strokeWidth="2" />
+              <path d="M137 56 V78 H55 V90" strokeWidth="2.5" />
+              <path d="M50 84 L55 90 L60 84" strokeWidth="2.5" />
+              <rect x="22" y="90" width="66" height="34" rx="9" strokeWidth="2.5" />
+              <path d="M35 107 H75" strokeWidth="2" opacity="0.55" />
+            </svg>
           </div>
         </div>
 
         {/* Card 3 */}
         <div className="card" id="card-3">
           <div className="card-header">
-            <h1>Cinematic Motion Design</h1>
+            <h1>AI Integrations</h1>
             <div className="card-index">(03)</div>
           </div>
-          
+
           <p className="card-desc">
-            We craft high-fidelity showreels, cinematic 3D renders, and scroll-triggered micro-interactions that tell a powerful brand narrative.
+            We embed LLMs, chatbots, and AI features into your product and workflows — with the guardrails to run them reliably in production.
           </p>
+          <ul className="card-tags">
+            <li>LLMs / GPT</li>
+            <li>Chatbots</li>
+            <li>RAG search</li>
+            <li>Guardrails</li>
+          </ul>
 
-          <div className="card-details">
-            <div className="card-testimonial">
-              <blockquote>
-                &quot;The motion design assets gave our launch campaign a cinematic polish. User engagement soared by 140%.&quot;
-              </blockquote>
-              <div className="testimonial-author">
-                <img src="/img11.webp" alt="Aiko Tanaka" />
-                <div className="author-info">
-                  <span className="name">Aiko Tanaka</span>
-                  <span className="role">Creative Director at Sora</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-gallery">
-              <div className="gallery-item">
-                <img src="/img3.webp" alt="Showcase 1" />
-              </div>
-              <div className="gallery-item">
-                <img src="/img12.webp" alt="Showcase 2" />
-              </div>
-              <div className="gallery-item">
-                <img src="/img13.webp" alt="Showcase 3" />
-              </div>
-            </div>
+          <div className="card-visual">
+            <svg viewBox="0 0 210 150" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="6" y="6" width="198" height="138" rx="10" strokeWidth="2.5" />
+              <rect x="18" y="22" width="96" height="26" rx="13" strokeWidth="2" />
+              <rect x="28" y="32" width="64" height="6" rx="3" fill="currentColor" stroke="none" opacity="0.55" />
+              <rect x="96" y="58" width="96" height="26" rx="13" fill="currentColor" stroke="none" opacity="0.9" />
+              <rect x="18" y="94" width="76" height="22" rx="11" strokeWidth="2" />
+              <rect x="18" y="122" width="150" height="16" rx="8" strokeWidth="2" />
+              <circle cx="184" cy="130" r="9" fill="currentColor" stroke="none" />
+              <path d="M176 17 l2.5 7 7 2.5 -7 2.5 -2.5 7 -2.5 -7 -7 -2.5 7 -2.5 z" fill="currentColor" stroke="none" />
+            </svg>
           </div>
         </div>
 
         {/* Card 4 */}
         <div className="card" id="card-4">
           <div className="card-header">
-            <h1>Strategic Web Experience</h1>
+            <h1>Internal Tools &amp; Platforms</h1>
             <div className="card-index">(04)</div>
           </div>
-          
+
           <p className="card-desc">
-            We combine performance optimizations, SEO-first architectures, and conversion-focused UI design to turn traffic into lasting client success.
+            We build custom dashboards, admin panels, and internal tools that replace spreadsheets and manual busywork with software that scales.
           </p>
+          <ul className="card-tags">
+            <li>Dashboards</li>
+            <li>Admin panels</li>
+            <li>Auth &amp; roles</li>
+            <li>Reporting</li>
+          </ul>
 
-          <div className="card-details">
-            <div className="card-testimonial">
-              <blockquote>
-                &quot;Not only is the site visually stunning, but the conversion rate jumped overnight. A true conversion-driven design agency.&quot;
-              </blockquote>
-              <div className="testimonial-author">
-                <img src="/img14.webp" alt="David Chen" />
-                <div className="author-info">
-                  <span className="name">David Chen</span>
-                  <span className="role">Growth Lead at Helix</span>
-                </div>
-              </div>
-            </div>
+          <div className="card-visual">
+            <svg viewBox="0 0 210 150" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="6" y="6" width="198" height="138" rx="10" strokeWidth="2.5" />
+              <path d="M52 6 V144" strokeWidth="2.5" />
+              <rect x="16" y="26" width="22" height="5" rx="2.5" fill="currentColor" stroke="none" opacity="0.6" />
+              <rect x="16" y="42" width="22" height="5" rx="2.5" fill="currentColor" stroke="none" opacity="0.6" />
+              <rect x="16" y="58" width="22" height="5" rx="2.5" fill="currentColor" stroke="none" opacity="0.6" />
+              <rect x="66" y="20" width="60" height="30" rx="5" strokeWidth="2" />
+              <rect x="134" y="20" width="58" height="30" rx="5" strokeWidth="2" />
+              <rect x="66" y="62" width="126" height="72" rx="5" strokeWidth="2" />
+              <path d="M82 122 V104 M98 122 V90 M114 122 V110 M130 122 V82 M146 122 V98 M162 122 V86 M178 122 V106" strokeWidth="4" opacity="0.85" />
+            </svg>
+          </div>
+        </div>
+      </section>
 
-            <div className="card-gallery">
-              <div className="gallery-item">
-                <img src="/img4.webp" alt="Showcase 1" />
-              </div>
-              <div className="gallery-item">
-                <img src="/img15.webp" alt="Showcase 2" />
-              </div>
-              <div className="gallery-item">
-                <img src="/img5.webp" alt="Showcase 3" />
+      {/* Technologies Section */}
+      <section className="info-section tech" id="tech">
+        <div className="section-heading">
+          <h2 className="reveal-text">TECH WE <br/> BUILD WITH</h2>
+          <p className="reveal-fade">(03) STACK</p>
+        </div>
+        <div className="tech-groups">
+          <div className="tech-group">
+            <span className="tech-cat">Frontend</span>
+            <ul className="tech-list">
+              <li>React</li>
+              <li>Next.js</li>
+              <li>TypeScript</li>
+              <li>Tailwind CSS</li>
+              <li>GSAP</li>
+            </ul>
+          </div>
+          <div className="tech-group">
+            <span className="tech-cat">Backend &amp; Data</span>
+            <ul className="tech-list">
+              <li>Node.js</li>
+              <li>Python</li>
+              <li>PostgreSQL</li>
+              <li>Supabase</li>
+              <li>Prisma</li>
+            </ul>
+          </div>
+          <div className="tech-group">
+            <span className="tech-cat">AI &amp; Automation</span>
+            <ul className="tech-list">
+              <li>OpenAI</li>
+              <li>LangChain</li>
+              <li>n8n</li>
+              <li>Zapier</li>
+              <li>Vector DBs</li>
+            </ul>
+          </div>
+          <div className="tech-group">
+            <span className="tech-cat">Cloud &amp; Tools</span>
+            <ul className="tech-list">
+              <li>Vercel</li>
+              <li>AWS</li>
+              <li>Docker</li>
+              <li>GitHub</li>
+              <li>Figma</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Process Section */}
+      <section className="info-section process" id="process">
+        <div className="section-heading">
+          <h2 className="reveal-text">HOW WE <br/> WORK</h2>
+          <p className="reveal-fade">(04) PROCESS</p>
+        </div>
+        <div className="process-grid">
+          <div className="process-step">
+            <span className="process-num">01</span>
+            <h3>Discovery</h3>
+            <p>We map your goals, users, and constraints, then scope the smallest thing that delivers real value.</p>
+          </div>
+          <div className="process-step">
+            <span className="process-num">02</span>
+            <h3>Design</h3>
+            <p>From flows to polished UI — we design the experience before a line of production code is written.</p>
+          </div>
+          <div className="process-step">
+            <span className="process-num">03</span>
+            <h3>Build</h3>
+            <p>We ship in tight iterations with clean, documented code you fully own — no black boxes.</p>
+          </div>
+          <div className="process-step">
+            <span className="process-num">04</span>
+            <h3>Launch &amp; Support</h3>
+            <p>We deploy, monitor, and stay on to iterate and improve. No hand-off cliff.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="info-section about" id="about">
+        <div className="section-heading">
+          <h2 className="reveal-text">WHO WE <br/> ARE</h2>
+          <p className="reveal-fade">(05) STUDIO</p>
+        </div>
+        <div className="about-body">
+          <p className="about-lead">
+            Folioverze is a lean software &amp; tech studio based in Assam, India. We partner with founders and teams to turn ideas into fast, reliable products — websites, automations, AI features, and the internal tools that keep a business running.
+          </p>
+          <p className="about-sub">
+            We keep the team small on purpose: senior hands on every project, direct communication, and no unnecessary layers between you and the people building your product.
+          </p>
+          <div className="about-stats">
+            <div className="about-stat"><span className="stat-num">24h</span><span className="stat-label">Response time</span></div>
+            <div className="about-stat"><span className="stat-num">100%</span><span className="stat-label">Code ownership</span></div>
+            <div className="about-stat"><span className="stat-num">Global</span><span className="stat-label">Clients served</span></div>
+            <div className="about-stat"><span className="stat-num">2026</span><span className="stat-label">Established</span></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="info-section pricing" id="pricing">
+        <div className="section-heading">
+          <h2 className="reveal-text">HOW TO <br/> WORK WITH US</h2>
+          <p className="reveal-fade">(06) ENGAGEMENT</p>
+        </div>
+        <div className="pricing-grid">
+          <div className="pricing-card">
+            <h3>Project</h3>
+            <p className="pricing-desc">Fixed-scope builds with a clear timeline and price. Best for a defined website, tool, or feature.</p>
+            <ul className="pricing-list">
+              <li>Scoped deliverables</li>
+              <li>Fixed timeline &amp; quote</li>
+              <li>Design + build + launch</li>
+            </ul>
+            <span className="pricing-note">Fixed scope &amp; timeline</span>
+          </div>
+          <div className="pricing-card featured">
+            <span className="pricing-tag">Most popular</span>
+            <h3>Retainer</h3>
+            <p className="pricing-desc">A set block of hours each month for ongoing development, automation, and improvements.</p>
+            <ul className="pricing-list">
+              <li>Monthly hours</li>
+              <li>Priority turnaround</li>
+              <li>Ongoing iteration</li>
+            </ul>
+            <span className="pricing-note">Rolling monthly partnership</span>
+          </div>
+          <div className="pricing-card">
+            <h3>Sprint</h3>
+            <p className="pricing-desc">A focused 1–2 week sprint to prototype, fix, or ship one thing fast.</p>
+            <ul className="pricing-list">
+              <li>1–2 weeks</li>
+              <li>One clear goal</li>
+              <li>Ship-ready output</li>
+            </ul>
+            <span className="pricing-note">Focused 1–2 week sprint</span>
+          </div>
+        </div>
+        <div className="pricing-cta-wrap">
+          <button type="button" onClick={() => setQuoteOpen(true)} className="pricing-cta magnetic">
+            <span>Get a quote</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="info-section faq" id="faq">
+        <div className="section-heading">
+          <h2 className="reveal-text">FAQ</h2>
+          <p className="reveal-fade">(07) QUESTIONS</p>
+        </div>
+        <div className="faq-list">
+          <details className="faq-item">
+            <summary>What kind of projects do you take on?</summary>
+            <p>Marketing sites and web apps, workflow automations, AI/LLM features, and internal tools like dashboards and admin panels. If it&apos;s software or tech that moves your business forward, it&apos;s in scope.</p>
+          </details>
+          <details className="faq-item">
+            <summary>How long does a typical project take?</summary>
+            <p>A focused sprint runs 1–2 weeks; a full website or tool typically 3–8 weeks depending on scope. We&apos;ll give you a realistic timeline before we start.</p>
+          </details>
+          <details className="faq-item">
+            <summary>Do I own the code and design?</summary>
+            <p>Yes — 100%. You get the full source, documentation, and design files. No lock-in, no black boxes.</p>
+          </details>
+          <details className="faq-item">
+            <summary>Which technologies do you use?</summary>
+            <p>Modern, boring-in-a-good-way stacks: React/Next.js, TypeScript, Node, Python, and the AI/automation tools that fit the job. We pick what&apos;s right for your product, not what&apos;s trendy.</p>
+          </details>
+          <details className="faq-item">
+            <summary>Do you offer ongoing support?</summary>
+            <p>Yes. We can stay on via a monthly retainer for maintenance, iteration, and new features — or hand off cleanly if you have your own team.</p>
+          </details>
+          <details className="faq-item">
+            <summary>How do we get started?</summary>
+            <p>Email us at hello@folioverze.com with a few lines about what you&apos;re building. We&apos;ll reply within 24 hours to set up a quick call.</p>
+          </details>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="contact" id="contact">
+        <div className="contact-grid"></div>
+        <div className="contact-mesh"></div>
+
+        <div className="section-heading">
+          <h2 className="reveal-text">GET IN <br/> TOUCH</h2>
+          <p className="reveal-fade">(03) CONTACT</p>
+        </div>
+
+        <div className="contact-body">
+          <div className="contact-left">
+            <p className="contact-lead">
+              Have a project in mind — a premium website, an automation, an AI feature, or an internal tool? Tell us what you&apos;re building and we&apos;ll get back within 24 hours.
+            </p>
+
+            <div className="contact-details">
+              <a href="mailto:hello@folioverze.com" className="contact-detail">
+                <span className="contact-detail-label">General</span>
+                <span className="contact-detail-value">hello@folioverze.com</span>
+              </a>
+              <a href="mailto:contact@folioverze.com" className="contact-detail">
+                <span className="contact-detail-label">New Projects</span>
+                <span className="contact-detail-value">contact@folioverze.com</span>
+              </a>
+              <div className="contact-detail">
+                <span className="contact-detail-label">Based in</span>
+                <span className="contact-detail-value">Assam, India — IST</span>
               </div>
             </div>
           </div>
+
+          <form className="contact-form" onSubmit={handleContactSubmit}>
+            <div className="form-field">
+              <label htmlFor="cf-name">Your name</label>
+              <input id="cf-name" type="text" name="name" required placeholder="Jane Doe" />
+            </div>
+            <div className="form-field">
+              <label htmlFor="cf-email">Email</label>
+              <input id="cf-email" type="email" name="email" required placeholder="jane@company.com" />
+            </div>
+            <div className="form-field">
+              <label htmlFor="cf-message">What can we build for you?</label>
+              <textarea id="cf-message" name="message" rows={4} required placeholder="Tell us about your project, timeline, and budget..."></textarea>
+            </div>
+            <button type="submit" className="contact-submit magnetic">
+              <span>Send message</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </button>
+          </form>
         </div>
       </section>
 
@@ -1428,8 +1683,8 @@ export default function Home() {
         <div className="outro-content">
           <p className="outro-tagline">READY TO COLLABORATE?</p>
           <div className="outro-cta-wrapper">
-            <a href="mailto:hello@lumina.studio" className="outro-cta magnetic">
-              <span>Let&apos;s Create</span>
+            <a href="#" onClick={(e) => { e.preventDefault(); setQuoteOpen(true); }} className="outro-cta magnetic">
+              <span>Let&apos;s Build</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="7" y1="17" x2="17" y2="7"></line>
                 <polyline points="7 7 17 7 17 17"></polyline>
@@ -1445,31 +1700,43 @@ export default function Home() {
 
         <div className="outro-footer">
           <div className="footer-col">
-            <h4>LOCATIONS</h4>
+            <h4>EXPLORE</h4>
+            <div className="footer-nav">
+              <a href="#work" className="hover-underline">Work</a>
+              <a href="#services" className="hover-underline">Services</a>
+              <a href="#tech" className="hover-underline">Technologies</a>
+              <a href="#process" className="hover-underline">Process</a>
+              <a href="#about" className="hover-underline">About</a>
+              <a href="#pricing" className="hover-underline">Engagement</a>
+              <a href="#faq" className="hover-underline">FAQ</a>
+              <a href="/privacy" className="hover-underline">Privacy Policy</a>
+            </div>
+          </div>
+
+          <div className="footer-col">
+            <h4>HOURS</h4>
             <div className="time-item">
-              <span>TOKYO</span>
+              <span>ASSAM, IN</span>
               <span className="time-val" id="tokyo-time">00:00 AM</span>
             </div>
             <div className="time-item">
-              <span>LONDON</span>
+              <span>UTC</span>
               <span className="time-val" id="london-time">00:00 AM</span>
             </div>
           </div>
 
           <div className="footer-col">
-            <h4>CONNECT</h4>
+            <h4>EMAIL</h4>
             <div className="social-links">
-              <a href="#" className="hover-underline">Instagram</a>
-              <a href="#" className="hover-underline">Behance</a>
-              <a href="#" className="hover-underline">Twitter</a>
-              <a href="#" className="hover-underline">LinkedIn</a>
+              <a href="mailto:hello@folioverze.com" className="hover-underline">hello@folioverze.com</a>
+              <a href="mailto:contact@folioverze.com" className="hover-underline">contact@folioverze.com</a>
             </div>
           </div>
 
           <div className="footer-col">
-            <h4>STUDIO</h4>
-            <p className="est-text">EST. 2026 / SHIBUYA-TOKYO</p>
-            <p className="copy-text">© 2026 LUMINA. ALL RIGHTS RESERVED.</p>
+            <h4>AGENCY</h4>
+            <p className="est-text">EST. 2026 / ASSAM, INDIA</p>
+            <p className="copy-text">© 2026 FOLIOVERZE. ALL RIGHTS RESERVED.</p>
           </div>
         </div>
       </section>
@@ -1485,6 +1752,57 @@ export default function Home() {
         <button className="viewer-close magnetic">
           <span>Close</span>
         </button>
+      </div>
+
+      {/* Quote / Contact Modal */}
+      <div
+        className={`quote-modal${quoteOpen ? " open" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Get a quote"
+      >
+        <div className="quote-backdrop" onClick={() => setQuoteOpen(false)}></div>
+        <div className="quote-panel">
+          <button className="quote-close" onClick={() => setQuoteOpen(false)} aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="6" y1="6" x2="18" y2="18" />
+              <line x1="18" y1="6" x2="6" y2="18" />
+            </svg>
+          </button>
+          <p className="quote-eyebrow">GET A QUOTE</p>
+          <h2 className="quote-title">Let&apos;s build something.</h2>
+          <p className="quote-sub">Tell us what you&apos;re working on and we&apos;ll reply within 24 hours.</p>
+          <form className="quote-form" onSubmit={handleContactSubmit}>
+            <input type="hidden" name="subject" value="New inquiry from folioverze.com" />
+            <input type="checkbox" name="botcheck" style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
+            <div className="form-field">
+              <label htmlFor="q-name">Your name</label>
+              <input id="q-name" type="text" name="name" required placeholder="Jane Doe" />
+            </div>
+            <div className="form-field">
+              <label htmlFor="q-email">Email</label>
+              <input id="q-email" type="email" name="email" required placeholder="jane@company.com" />
+            </div>
+            <div className="form-field">
+              <label htmlFor="q-message">What can we build for you?</label>
+              <textarea id="q-message" name="message" rows={4} required placeholder="Tell us about your project, timeline, and budget..."></textarea>
+            </div>
+            <button type="submit" className="contact-submit" disabled={formStatus === "sending"}>
+              <span>{formStatus === "sending" ? "Sending…" : "Send message"}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </button>
+            {formStatus === "success" && (
+              <p className="form-status form-status--ok">Thanks — we&apos;ll get back to you within 24 hours.</p>
+            )}
+            {formStatus === "error" && (
+              <p className="form-status form-status--err">Something went wrong. Please email us at hello@folioverze.com.</p>
+            )}
+          </form>
+          <p className="quote-alt">Prefer email? <a href="mailto:hello@folioverze.com">hello@folioverze.com</a></p>
+        </div>
       </div>
     </>
   );

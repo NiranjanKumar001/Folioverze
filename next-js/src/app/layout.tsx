@@ -2,8 +2,34 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Lumina | Elite Digital Studio",
-  description: "We engineer high-end sensory digital experiences.",
+  metadataBase: new URL("https://www.folioverze.com"),
+  title: "Folioverze | Software & Tech Agency",
+  description:
+    "Folioverze is a freelance software & tech agency building premium websites, automations, AI integrations, and internal tools — from Assam, India.",
+  keywords: [
+    "software agency",
+    "web development",
+    "automation",
+    "AI integration",
+    "internal tools",
+    "Assam",
+    "India",
+    "Folioverze",
+  ],
+  openGraph: {
+    type: "website",
+    url: "https://www.folioverze.com",
+    siteName: "Folioverze",
+    title: "Folioverze | Software & Tech Agency",
+    description:
+      "Premium websites, automations, AI integrations, and internal tools — built by a freelance software & tech agency from Assam, India.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Folioverze | Software & Tech Agency",
+    description:
+      "Premium websites, automations, AI integrations, and internal tools — from Assam, India.",
+  },
 };
 
 export default function RootLayout({

@@ -121,12 +121,12 @@ p {
 }
 
 /* Prevent Flash of Unstyled/Un-split Content */
-.hero h1, 
-.hero h2, 
-.hero p, 
-.hero a:not(.cta a), 
-.header h1, 
-.site-info p, 
+.hero h1,
+.hero h2,
+.hero p,
+.hero a:not(.cta a):not(.logo),
+.header h1,
+.site-info p,
 .hero-footer h2 {
   opacity: 0;
 }
@@ -153,13 +153,26 @@ p {
 
 
 nav {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
   width: 100vw;
   height: 5rem;
   padding: 1.5rem 3.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background-color 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+nav.scrolled {
+  background-color: rgba(242, 240, 248, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
 }
 
 .logo-group {
@@ -169,11 +182,32 @@ nav {
 }
 
 .logo-group .logo {
-  width: 1.5rem;
-  height: 1.5rem;
   display: flex;
-  align-items: center;
+  align-items: center; /* wing "f" balances its ascender/descender around center */
+  gap: 0;
+  height: auto;
   transform: scale(0);
+  transform-origin: left center;
+}
+
+/* red wing = the "F" of the wordmark — deliberately larger than the text */
+.logo-group .logo .logo-mark {
+  height: 2.6rem;
+  width: auto;
+}
+
+/* "olioverze" continues the wordmark in the site's display font.
+   Tune these three knobs in `npm run dev` if the letters don't sit right on the wing:
+   font-size (letter height), margin-left (tuck), transform translateY (baseline). */
+.logo-group .logo .logo-word {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--fg);
+  margin-left: -0.08em;
+  transform: translateY(0.06em);
 }
 
 .logo-name a {
@@ -214,11 +248,11 @@ nav {
 .links a {
   position: relative;
   display: inline-block;
-  padding: 0.65rem 1.45rem !important;
+  padding: 0.6rem 1.2rem !important;
   border-radius: 9999px;
   z-index: 2;
   font-family: 'Outfit', sans-serif;
-  font-size: 0.95rem !important;
+  font-size: 0.9rem !important;
   font-weight: 550 !important;
   color: var(--fg) !important;
   text-decoration: none;
@@ -447,6 +481,582 @@ nav {
   margin-bottom: 0.5rem;
 }
 
+/* ---------- Info sections: Process / About / Pricing / FAQ ---------- */
+.info-section {
+  position: relative;
+  width: 100vw;
+  background-color: var(--bg);
+  color: var(--fg);
+  z-index: 6;
+  padding-bottom: 7rem;
+}
+
+/* Consistent, intentional rhythm for these sections (override the shared 8rem heading top) */
+.info-section .section-heading {
+  padding-top: 7rem;
+  padding-bottom: 3.5rem;
+}
+
+.info-section + .info-section {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Process */
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5rem;
+  padding: 0 4rem;
+  max-width: 1400px;
+  margin: 2rem auto 0;
+}
+
+.process-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--stroke);
+}
+
+.process-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #D7263D;
+}
+
+.process-step h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.process-step p {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgba(31, 31, 31, 0.7);
+  overflow: visible;
+}
+
+/* About */
+.about-body {
+  max-width: 1100px;
+  margin: 2rem auto 0;
+  padding: 0 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.about-lead {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fg);
+  max-width: 62ch;
+  overflow: visible;
+}
+
+.about-sub {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.55;
+  color: rgba(31, 31, 31, 0.65);
+  max-width: 62ch;
+  overflow: visible;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+
+.about-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--stroke);
+}
+
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.stat-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(31, 31, 31, 0.5);
+}
+
+/* Pricing */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 0 4rem;
+  max-width: 1300px;
+  margin: 2rem auto 0;
+}
+
+.pricing-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 2.5rem;
+  border: 1px solid var(--stroke);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.pricing-card.featured {
+  border-color: #D7263D;
+  background: rgba(215, 38, 61, 0.05);
+}
+
+.pricing-tag {
+  position: absolute;
+  top: -0.75rem;
+  left: 2.5rem;
+  background: #D7263D;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.pricing-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.pricing-desc {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba(31, 31, 31, 0.7);
+  overflow: visible;
+}
+
+.pricing-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
+}
+
+.pricing-list li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: var(--fg);
+}
+
+.pricing-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #D7263D;
+}
+
+.pricing-note {
+  margin-top: auto;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--stroke);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.pricing-cta-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 3.5rem;
+}
+
+.pricing-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1rem 2rem;
+  background: var(--fg);
+  color: var(--bg);
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 550;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: background-color 0.3s ease;
+}
+
+.pricing-cta:hover {
+  background: #D7263D;
+}
+
+.pricing-cta svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* FAQ */
+.faq-list {
+  max-width: 900px;
+  margin: 2rem auto 0;
+  padding: 0 4rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-item {
+  border-top: 1px solid var(--stroke);
+  padding: 1.5rem 0;
+}
+
+.faq-item:last-child {
+  border-bottom: 1px solid var(--stroke);
+}
+
+.faq-item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  list-style: none;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: "+";
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #D7263D;
+  flex-shrink: 0;
+}
+
+.faq-item[open] summary::after {
+  content: "\2212";
+}
+
+.faq-item p {
+  margin-top: 1rem;
+  max-width: 72ch;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(31, 31, 31, 0.7);
+  overflow: visible;
+}
+
+@media (max-width: 1000px) {
+  .process-grid,
+  .about-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .process-grid,
+  .about-body,
+  .pricing-grid,
+  .faq-list {
+    padding: 0 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .process-grid,
+  .about-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .about-lead {
+    font-size: 1.5rem;
+  }
+
+  .about-sub {
+    font-size: 1.05rem;
+  }
+
+  .info-section {
+    padding-bottom: 5rem;
+  }
+
+  .process-grid,
+  .about-body,
+  .pricing-grid,
+  .faq-list {
+    padding: 0 1.25rem;
+  }
+
+  .faq-item summary {
+    font-size: 1.15rem;
+  }
+}
+
+/* ---------- Contact Section ---------- */
+.contact {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+  color: var(--fg);
+  z-index: 6;
+  overflow: hidden;
+  padding-bottom: 8rem;
+}
+
+.contact .section-heading {
+  padding-bottom: 2rem;
+}
+
+/* Contact section hidden for now — form has no backend yet.
+   To re-enable: delete this rule AND repoint the nav "Contact" href back to #contact. */
+.contact {
+  display: none;
+}
+
+.contact-grid {
+  position: absolute;
+  inset: 0;
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.contact-mesh {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 25% 30%, rgba(215, 38, 61, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 75% 70%, rgba(61, 47, 169, 0.09) 0%, transparent 42%);
+  animation: rotateMesh 30s infinite linear;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.contact-body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem 5rem;
+  padding: 0 4rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 5rem auto 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contact-left {
+  flex: 1 1 24rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.contact-lead {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--fg);
+  max-width: 32ch;
+  overflow: visible;
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.contact-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--stroke);
+  width: fit-content;
+  min-width: 18rem;
+  overflow: visible;
+}
+
+.contact-detail-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(31, 31, 31, 0.5);
+}
+
+.contact-detail-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--fg);
+  transition: color 0.3s ease;
+}
+
+a.contact-detail:hover .contact-detail-value {
+  color: #D7263D;
+}
+
+.contact-form {
+  flex: 1 1 30rem;
+  max-width: 34rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 2.75rem;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--stroke);
+  border-radius: 1.75rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.form-field label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(31, 31, 31, 0.5);
+}
+
+.form-field input,
+.form-field textarea {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  color: var(--fg);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--stroke);
+  padding: 0.65rem 0;
+  outline: none;
+  resize: none;
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: rgba(31, 31, 31, 0.3);
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-bottom-color: #D7263D;
+}
+
+.contact-submit {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+  padding: 1rem 2rem;
+  background-color: var(--fg);
+  color: var(--bg);
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 550;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: background-color 0.3s ease;
+}
+
+.contact-submit:hover {
+  background-color: #D7263D;
+}
+
+.contact-submit svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (max-width: 1000px) {
+  .contact-body {
+    flex-direction: column;
+    gap: 3.5rem;
+    padding: 0 2rem;
+  }
+
+  .contact-form {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact {
+    padding-bottom: 5rem;
+  }
+
+  .contact-body {
+    padding: 0 1.25rem;
+  }
+
+  .contact-lead {
+    font-size: 1.1rem;
+  }
+
+  .contact-detail-value {
+    font-size: 1.2rem;
+  }
+}
+
 .outro {
   position: relative;
   width: 100vw;
@@ -599,11 +1209,32 @@ nav {
 .outro-footer {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 2rem;
   width: 100%;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding-top: 2.5rem;
   z-index: 2;
+}
+
+.footer-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem 1.5rem;
+  margin-top: 0.85rem;
+}
+
+.footer-nav a {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.95rem;
+  color: rgba(31, 31, 31, 0.75);
+  width: fit-content;
+  overflow: visible;
+  transition: color 0.25s ease;
+}
+
+.footer-nav a:hover {
+  color: var(--fg);
 }
 
 .footer-col {
@@ -631,7 +1262,8 @@ nav {
 
 .footer-col .time-item span:first-child {
   color: rgba(31, 31, 31, 0.5);
-  width: 4rem;
+  width: 5.5rem;
+  white-space: nowrap;
 }
 
 .footer-col .time-item .time-val {
@@ -728,12 +1360,51 @@ nav {
   overflow: hidden;
 }
 
+.work-item-link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.work-item-meta {
+  display: block;
+  margin-top: 1rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--fg);
+  opacity: 0.65;
+  transition: opacity 0.3s ease;
+}
+
+.work-item-link:hover .work-item-meta {
+  opacity: 1;
+}
+
 .work-item-img {
   position: absolute;
   width: 100%;
   height: 100%;
   clip-path: polygon(25% 25%, 75% 40%, 100% 100%, 0% 100%);
   will-change: clip-path;
+}
+
+/* Darken the project image so the title stays legible */
+.work-item-img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.12) 40%,
+    rgba(0, 0, 0, 0.62) 100%
+  );
+  pointer-events: none;
 }
 
 .work-item-name {
@@ -915,9 +1586,12 @@ nav {
     font-size: 1.15rem;
   }
 
-  .logo-group .logo {
-    width: 1.25rem;
-    height: 1.25rem;
+  .logo-group .logo .logo-mark {
+    height: 2rem;
+  }
+
+  .logo-group .logo .logo-word {
+    font-size: 0.95rem;
   }
 
   .cta a {
@@ -1227,7 +1901,8 @@ body.hovering-image .custom-cursor-follower {
   height: 68%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 1.5rem;
   padding: 3.5rem;
   border-radius: 2rem;
   color: #fff;
@@ -1268,92 +1943,41 @@ body.hovering-image .custom-cursor-follower {
   font-weight: 400;
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.85);
-  max-width: 85%;
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-}
-
-.card-details {
-  display: grid;
-  grid-template-columns: 1.2fr 1.8fr;
-  gap: 3rem;
-  align-items: end;
-  width: 100%;
-}
-
-.card-testimonial {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.card-testimonial blockquote {
-  font-family: "Outfit", sans-serif;
-  font-style: italic;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.75);
-  border-left: 2px solid rgba(255, 255, 255, 0.3);
-  padding-left: 1rem;
+  max-width: 60%;
   margin: 0;
 }
 
-.testimonial-author {
+/* Capability tags per service */
+.card-tags {
+  list-style: none;
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  max-width: 60%;
 }
 
-.testimonial-author img {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-}
-
-.author-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.author-info .name {
+.card-tags li {
   font-family: "Outfit", sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 0.4rem 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 9999px;
 }
 
-.author-info .role {
-  font-family: "Outfit", sans-serif;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+/* Service mockup illustration — anchored bottom-right */
+.card-visual {
+  position: absolute;
+  bottom: 3rem;
+  right: 3.5rem;
+  pointer-events: none;
 }
 
-/* Gallery thumb strip */
-.card-gallery {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-}
-
-.card-gallery .gallery-item {
-  width: 130px;
-  height: 130px;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.card-gallery .gallery-item:hover {
-  transform: translateY(-8px) scale(1.05);
-}
-
-.card-gallery .gallery-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.card-visual svg {
+  width: 320px;
+  height: auto;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .card#card-1 {
@@ -1604,4 +2228,330 @@ body.hovering-image .custom-cursor-follower {
   .services-timeline {
     display: none !important;
   }
+}
+/* ---------- Legal / Privacy page ---------- */
+.legal-page {
+  background-color: var(--bg);
+  min-height: 100vh;
+  width: 100%;
+}
+
+.legal {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem 8rem;
+  font-family: 'Outfit', sans-serif;
+  color: var(--fg);
+}
+
+.legal-back {
+  display: inline-block;
+  margin-bottom: 3rem;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--fg);
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.legal-back:hover {
+  opacity: 1;
+}
+
+.legal h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin-bottom: 0.5rem;
+}
+
+.legal-updated {
+  color: rgba(31, 31, 31, 0.5);
+  margin-bottom: 2.5rem;
+  overflow: visible;
+}
+
+.legal h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 2.5rem 0 0.75rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.legal p,
+.legal li {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: rgba(31, 31, 31, 0.8);
+  overflow: visible;
+}
+
+.legal ul {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.legal a {
+  color: #D7263D;
+  text-decoration: underline;
+}
+
+.footer-privacy {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* ---------- Quote / Contact Modal ---------- */
+.quote-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.quote-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.quote-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 18, 28, 0.5);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.quote-panel {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 3rem;
+  background: var(--bg);
+  border: 1px solid var(--stroke);
+  border-radius: 1.75rem;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+  transform: translateY(24px) scale(0.97);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.quote-modal.open .quote-panel {
+  transform: translateY(0) scale(1);
+}
+
+.quote-close {
+  position: absolute;
+  top: 1.4rem;
+  right: 1.6rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--fg);
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.quote-close:hover {
+  opacity: 1;
+}
+
+.quote-close svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.quote-eyebrow {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: #D7263D;
+  margin-bottom: 0.75rem;
+  overflow: visible;
+}
+
+.quote-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+}
+
+.quote-sub {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba(31, 31, 31, 0.65);
+  margin-bottom: 2rem;
+  overflow: visible;
+}
+
+.quote-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.quote-alt {
+  margin-top: 1.5rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(31, 31, 31, 0.6);
+  overflow: visible;
+}
+
+.quote-alt a {
+  color: #D7263D;
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .quote-panel {
+    padding: 2rem 1.5rem;
+  }
+  .quote-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* Service cards — responsive icon/tags */
+@media (max-width: 1000px) {
+  .card-desc,
+  .card-tags {
+    max-width: 100%;
+  }
+  .card-visual svg {
+    width: 130px;
+    height: 130px;
+  }
+  .card-visual {
+    bottom: 2.5rem;
+    right: 2.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .card-visual {
+    display: none;
+  }
+  .card-tags li {
+    font-size: 0.72rem;
+    padding: 0.3rem 0.7rem;
+  }
+}
+
+/* ---------- Technologies section ---------- */
+.tech-groups {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5rem;
+  padding: 0 4rem;
+  max-width: 1400px;
+  margin: 1rem auto 0;
+}
+
+.tech-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--stroke);
+}
+
+.tech-cat {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #D7263D;
+}
+
+.tech-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.tech-list li {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--fg);
+  width: fit-content;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.tech-list li:hover {
+  color: #D7263D;
+  transform: translateX(5px);
+}
+
+@media (max-width: 1000px) {
+  .tech-groups {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .tech-groups {
+    grid-template-columns: 1fr;
+    padding: 0 1.25rem;
+    gap: 2rem;
+  }
+  .tech-list li {
+    font-size: 1.25rem;
+  }
+  .outro-footer {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Contact form (Web3Forms) status */
+.contact-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.form-status {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  overflow: visible;
+}
+
+.form-status--ok {
+  color: #1f8a4c;
+}
+
+.form-status--err {
+  color: #D7263D;
 }

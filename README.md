@@ -1,38 +1,36 @@
-# <p align="center">✨ LUMINA | SENSORY DIGITAL STUDIO ✨</p>
+# <p align="center">✨ FOLIOVERZE | SENSORY DIGITAL STUDIO ✨</p>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Syne&weight=700&size=28&duration=3000&pause=1000&color=1F1F1F&center=true&vCenter=true&width=500&lines=WE+ENGINEER+SENSORY;DIGITAL+EXPERIENCES;LUMINA+STUDIO" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Syne&weight=700&size=28&duration=3000&pause=1000&color=D7263D&center=true&vCenter=true&width=500&lines=WE+ENGINEER+SENSORY;DIGITAL+EXPERIENCES;FOLIOVERZE+STUDIO" alt="Typing SVG" />
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
   <a href="#"><img src="https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=white" alt="GSAP" /></a>
   <a href="#"><img src="https://img.shields.io/badge/Lenis-Smooth_Scroll-black?style=for-the-badge" alt="Lenis" /></a>
 </p>
 
 <p align="center">
-  <img src="./image.png" alt="Lumina Project Overview" width="100%" />
+  <img src="./image.png" alt="Folioverze Project Overview" width="100%" />
 </p>
 
 
 ```text
-      :::       :::    :::  :::   :::  ::::::::::: ::::    :::     :::     
-     :+:       :+:    :+:  :+:+: :+:+:     :+:     :+:+:   :+:   :+: :+:   
-    +:+       +:+    +:+ +:+ +:+:+ +:+    +:+     :+:+:+  +:+  +:+   +:+  
-   +#+       +#+    ++# +#+  +:+  +#+    +#+     +#+ +:+ +#+ +#++:++#++: 
-  +#+       +#+    +#+ +#+       +#+    +#+     +#+  +#+#+# +#+     +#+ 
- #+#       #+#    #+# #+#       #+#    #+#     #+#   #+#+# #+#     #+# 
-##########  ########  ###       ############## ###    #### ###     ### 
-                                                                     
+  _____ ___  _     ___ _____     _______ ____   __________ 
+ |  ___/ _ \| |   |_ _/ _ \ \   / / ____|  _ \ |__  / ____|
+ | |_ | | | | |    | | | | \ \ / /|  _| | |_) |  / /|  _|  
+ |  _|| |_| | |___ | | |_| |\ V / | |___|  _ <  / /_| |___ 
+ |_|   \___/|_____|___\___/  \_/  |_____|_| \_\/____|_____|
+
                -- ＥＳＴ.  ２０２６  /  ＴＯＫＹＯ --
 ```
 
 ---
 
 > [!NOTE]
-> **Lumina** is a premium, high-performance landing page engineered for creative studios. It blends immersive typography, buttery-smooth kinetics, and high-fidelity 3D interaction into a unified frontend experience.
+> **Folioverze** is a freelance software & tech agency — we build premium websites, automations, AI integrations, and internal tools. This repo is our landing page: immersive typography, buttery-smooth kinetics, and high-fidelity interaction in a Next.js frontend.
 
 ---
 
@@ -49,43 +47,44 @@
 
 ### 🚀 Performance & Polishing
 *   **Zero FOUC (Flash of Unstyled Content)**: Pre-initialized CSS states ensure all images start hidden at `scale(0)` and text containers load at `opacity: 0` before GSAP splits and orchestrates them.
-*   **WebP Modern Compression**: Updated standard image links to `.webp` assets to ensure instant loading speeds on high-latency mobile networks.
+*   **WebP Modern Compression**: Standard image links use `.webp` assets to ensure instant loading speeds on high-latency mobile networks.
 
 ---
 
 ## 🛠️ Local Development & Commands
 
-Run a local server inside the workspace to preview changes:
+The app lives in [`next-js/`](./next-js). From that folder:
 
-### 1. Standalone Live Server
 ```bash
-npx http-server -p 3000
+cd next-js
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-### 2. Share with Mobile Devices (Host Network)
-To test responsive swipe physics on your physical mobile phone, run the server bound to all local network interfaces:
+Production build:
 ```bash
-npx http-server -a 0.0.0.0 -p 3000
-```
-Then open your mobile browser and enter your computer's local IP address:
-```text
-http://192.168.X.X:3000
+npm run build && npm run start
 ```
 
 ---
 
 ## 📂 Project Structure
 ```text
-Lumina/
-├── index.html        # Responsive framework & DOM structure
-├── styles.css        # Premium typography tokens & responsive layout overrides
-├── script.js        # Core GSAP timelines, physics loop & touch mapping
-├── video.mp4         # Immersive hero backdrop reel
-└── img1.webp...      # Optimized webp creative project assets
+Folioverze/
+├── README.md
+├── image.png                 # Project overview screenshot
+└── next-js/
+    ├── src/app/
+    │   ├── page.tsx          # Core GSAP timelines, physics loop & touch mapping
+    │   ├── globals.css       # Premium typography tokens & responsive layout
+    │   ├── layout.tsx        # Root layout, metadata & fonts
+    │   ├── icon.svg          # Brand favicon (modern browsers)
+    │   └── favicon.ico       # Brand favicon (legacy)
+    └── public/               # video.mp4 + img1..15.webp creative assets
 ```
 
 ---
 
 <p align="center">
-  <sub>Engineered with precision for premium sensory outputs. Lumina Creative.</sub>
+  <sub>Built with precision by Folioverze — software & tech, from Assam, India.</sub>
 </p>
