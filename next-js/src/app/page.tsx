@@ -1073,6 +1073,25 @@ export default function Home() {
         });
       }
 
+      // Footer "Explore" links → smooth-scroll to the section (like the nav pill).
+      document.querySelectorAll<HTMLAnchorElement>('.footer-nav a[href^="#"]').forEach((link) => {
+        link.addEventListener("click", (e) => {
+          const targetId = link.getAttribute("href");
+          if (!targetId || targetId === "#") return;
+          const targetEl = document.querySelector(targetId);
+          if (!targetEl) return;
+          e.preventDefault();
+          if (window.globalLenis) {
+            window.globalLenis.scrollTo(targetEl, {
+              duration: 1.5,
+              easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+            });
+          } else {
+            targetEl.scrollIntoView({ behavior: "smooth" });
+          }
+        });
+      });
+
       const tokyoTimeEl = document.getElementById("tokyo-time");
       const londonTimeEl = document.getElementById("london-time");
       if (tokyoTimeEl && londonTimeEl) {
