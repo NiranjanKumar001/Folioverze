@@ -1195,7 +1195,7 @@ export default function Home() {
 
         <div className="hero-main-content">
           <div className="header">
-            <h1>We build premium software, automations &amp; AI for businesses</h1>
+            <h1>We build premium software, automations &amp; AI for growing businesses</h1>
           </div>
 
           <div className="site-info">
