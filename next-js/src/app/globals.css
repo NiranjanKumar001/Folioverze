@@ -126,8 +126,7 @@ p {
 .hero p,
 .hero a:not(.cta a):not(.logo),
 .header h1,
-.site-info p,
-.hero-footer h2 {
+.site-info p {
   opacity: 0;
 }
 
@@ -358,47 +357,6 @@ nav.scrolled {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-}
-
-.hero-footer {
-  position: absolute;
-  bottom: 1.5rem;
-  left: 3.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-}
-
-.play-btn {
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 1px solid var(--fg);
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background-color: transparent;
-  transition: background-color 0.3s, transform 0.3s;
-  opacity: 0;
-  transform: scale(0);
-}
-
-.play-btn svg {
-  width: 1rem;
-  height: 1rem;
-  fill: var(--fg);
-  margin-left: 2px;
-  transition: fill 0.3s;
-}
-
-.play-btn:hover {
-  background-color: var(--fg);
-  transform: scale(1.08) !important;
-}
-
-.play-btn:hover svg {
-  fill: var(--bg);
 }
 
 .line {
@@ -1526,10 +1484,6 @@ a.contact-detail:hover .contact-detail-value {
     gap: 0.75rem;
   }
 
-  .hero-footer {
-    left: var(--side-padding);
-    bottom: 1.5rem;
-  }
 
   .images-container .img {
     width: 45%;
@@ -1617,9 +1571,6 @@ a.contact-detail:hover .contact-detail-value {
     font-size: 0.8rem;
   }
 
-  .hero-footer {
-    display: none;
-  }
 
   .images-container .img {
     width: 48%;

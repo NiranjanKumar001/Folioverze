@@ -119,6 +119,11 @@ export default function Home() {
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [formStatus, setFormStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
+  const openQuote = () => {
+    setFormStatus("idle");
+    setQuoteOpen(true);
+  };
+
   // Web3Forms — no backend needed. Key is public by design (fine to hardcode).
   const handleContactSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -146,7 +151,6 @@ export default function Home() {
   // Modal open/close side-effects: lock scroll (Lenis + body) and close on Escape.
   useEffect(() => {
     if (!quoteOpen) return;
-    setFormStatus("idle");
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setQuoteOpen(false);
     };
@@ -168,7 +172,7 @@ export default function Home() {
 
     const setupTextSplitting = () => {
       const textElements = document.querySelectorAll(
-        ".hero h1, .hero h2, .hero p, .hero a:not(.cta a):not(.logo), .header h1, .site-info p, .hero-footer h2"
+        ".hero h1, .hero h2, .hero p, .hero a:not(.cta a):not(.logo), .header h1, .site-info p"
       );
 
       textElements.forEach((element) => {
@@ -379,7 +383,7 @@ export default function Home() {
     );
 
     tl.to(
-      [".header span", ".site-info span", ".hero-footer span"],
+      [".header span", ".site-info span"],
       {
         y: "0%",
         duration: 1,
@@ -387,17 +391,6 @@ export default function Home() {
         ease: "power4.out",
       },
       "<+=0.2"
-    );
-
-    tl.to(
-      ".play-btn",
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        ease: "power2.out",
-      },
-      "<"
     );
 
     tl.eventCallback("onComplete", () => {
@@ -1190,7 +1183,7 @@ export default function Home() {
           </div>
 
           <div className="cta magnetic">
-            <a href="#" onClick={(e) => { e.preventDefault(); setQuoteOpen(true); }}>
+            <a href="#" onClick={(e) => { e.preventDefault(); openQuote(); }}>
               <svg className="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="7" y1="17" x2="17" y2="7"></line>
                 <polyline points="7 7 17 7 17 17"></polyline>
@@ -1214,14 +1207,6 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="hero-footer">
-          <div className="play-btn">
-            <svg viewBox="0 0 30 30" fill="currentColor">
-              <path d="M6 6v20l16-10z" />
-            </svg>
-          </div>
-          <h2>Play Showreel (0:58)</h2>
-        </div>
       </section>
 
       {/* Selected Works Section */}
@@ -1615,7 +1600,7 @@ export default function Home() {
           </div>
         </div>
         <div className="pricing-cta-wrap">
-          <button type="button" onClick={() => setQuoteOpen(true)} className="pricing-cta magnetic">
+          <button type="button" onClick={openQuote} className="pricing-cta magnetic">
             <span>Get a quote</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="7" y1="17" x2="17" y2="7"></line>
@@ -1723,7 +1708,7 @@ export default function Home() {
         <div className="outro-content">
           <p className="outro-tagline">READY TO COLLABORATE?</p>
           <div className="outro-cta-wrapper">
-            <a href="#" onClick={(e) => { e.preventDefault(); setQuoteOpen(true); }} className="outro-cta magnetic">
+            <a href="#" onClick={(e) => { e.preventDefault(); openQuote(); }} className="outro-cta magnetic">
               <span>Let&apos;s Build</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="7" y1="17" x2="17" y2="7"></line>

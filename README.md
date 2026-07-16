@@ -72,10 +72,8 @@ npm run build && npm run start
 Folioverze/
 ├── README.md
 ├── image.png                 # Landing page preview (README)
-├── assets/                   # Source design files (not served)
-│   ├── logo/                 # Brand logo SVGs (source for the generated icons)
-│   └── projects/             # Original project screenshots (e.g. Drokpa)
 └── next-js/                  # The Next.js app (single source of truth)
+    ├── brand/                # Brand logo SVGs (source for the generated icons)
     ├── src/app/
     │   ├── page.tsx          # Core GSAP timelines, physics loop & touch mapping
     │   ├── globals.css       # Typography tokens & responsive layout
