@@ -1307,14 +1307,24 @@ export default function Home() {
           </div>
 
           <p className="card-desc">
-            We design and build fast, high-end marketing sites and web apps — pixel-perfect, SEO-ready, and engineered to convert.
+            Your website is your first impression — and a slow, generic one quietly costs you customers. We design and build fast, high-end sites and web apps that load instantly, rank on Google, and turn visitors into paying customers.
           </p>
           <ul className="card-tags">
             <li>Next.js</li>
+            <li>React</li>
             <li>SEO-ready</li>
             <li>Headless CMS</li>
             <li>Blazing fast</li>
+            <li>Responsive</li>
           </ul>
+          <div className="card-usecases">
+            <span className="card-usecases-label">Where it helps</span>
+            <ul>
+              <li>Marketing sites &amp; landing pages that convert</li>
+              <li>Web apps, dashboards &amp; customer portals</li>
+              <li>Redesigns &amp; performance rescues for slow sites</li>
+            </ul>
+          </div>
 
           <div className="card-visual">
             <svg viewBox="0 0 210 150" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1342,14 +1352,24 @@ export default function Home() {
           </div>
 
           <p className="card-desc">
-            We connect your tools and automate the repetitive work — from data syncs to onboarding — so your team ships faster with fewer mistakes.
+            Repetitive manual work quietly drains your team&apos;s hours and invites costly mistakes. We connect your tools and automate the busywork — from data entry to onboarding — so your people spend their time on what actually grows the business.
           </p>
           <ul className="card-tags">
-            <li>n8n / Zapier</li>
+            <li>n8n</li>
+            <li>Zapier</li>
+            <li>Make</li>
             <li>API integrations</li>
             <li>Data sync</li>
-            <li>Scheduled jobs</li>
+            <li>Webhooks</li>
           </ul>
+          <div className="card-usecases">
+            <span className="card-usecases-label">Where it helps</span>
+            <ul>
+              <li>Onboarding, offboarding &amp; approval flows</li>
+              <li>Syncing CRM, spreadsheets &amp; databases</li>
+              <li>Automated reports, invoices &amp; alerts</li>
+            </ul>
+          </div>
 
           <div className="card-visual">
             <svg viewBox="0 0 210 150" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1377,14 +1397,24 @@ export default function Home() {
           </div>
 
           <p className="card-desc">
-            We embed LLMs, chatbots, and AI features into your product and workflows — with the guardrails to run them reliably in production.
+            Everyone wants AI — but bolted on carelessly it hallucinates and erodes trust. We embed LLMs, chatbots, and AI features into your product and workflows, with the guardrails and testing to run them reliably in production.
           </p>
           <ul className="card-tags">
-            <li>LLMs / GPT</li>
+            <li>OpenAI</li>
+            <li>LangChain</li>
+            <li>RAG</li>
             <li>Chatbots</li>
-            <li>RAG search</li>
+            <li>Vector DBs</li>
             <li>Guardrails</li>
           </ul>
+          <div className="card-usecases">
+            <span className="card-usecases-label">Where it helps</span>
+            <ul>
+              <li>Support &amp; sales chatbots that actually help</li>
+              <li>Search &amp; answers over your own documents</li>
+              <li>AI copilots &amp; assistants inside your product</li>
+            </ul>
+          </div>
 
           <div className="card-visual">
             <svg viewBox="0 0 210 150" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1408,14 +1438,24 @@ export default function Home() {
           </div>
 
           <p className="card-desc">
-            We build custom dashboards, admin panels, and internal tools that replace spreadsheets and manual busywork with software that scales.
+            When your team runs the business on spreadsheets and manual steps, work breaks and nothing scales. We build custom dashboards, admin panels, and internal tools that replace the busywork with software your team actually enjoys using.
           </p>
           <ul className="card-tags">
             <li>Dashboards</li>
             <li>Admin panels</li>
             <li>Auth &amp; roles</li>
             <li>Reporting</li>
+            <li>Integrations</li>
+            <li>Real-time</li>
           </ul>
+          <div className="card-usecases">
+            <span className="card-usecases-label">Where it helps</span>
+            <ul>
+              <li>Operations, sales &amp; analytics dashboards</li>
+              <li>Customer, order &amp; inventory management</li>
+              <li>Role-based internal portals for your team</li>
+            </ul>
+          </div>
 
           <div className="card-visual">
             <svg viewBox="0 0 210 150" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

@@ -1902,7 +1902,7 @@ body.hovering-image .custom-cursor-follower {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 1.5rem;
+  gap: 1.15rem;
   padding: 3.5rem;
   border-radius: 2rem;
   color: #fff;
@@ -2554,4 +2554,54 @@ body.hovering-image .custom-cursor-follower {
 
 .form-status--err {
   color: #D7263D;
+}
+
+/* Service card — use-case / painpoint list */
+.card-usecases {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-width: 56%;
+}
+
+.card-usecases-label {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.card-usecases ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card-usecases li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 1rem;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.card-usecases li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 7px;
+  height: 7px;
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+}
+
+@media (max-width: 1000px) {
+  .card-usecases {
+    max-width: 100%;
+  }
 }
