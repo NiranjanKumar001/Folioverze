@@ -12,6 +12,10 @@
   <a href="#"><img src="https://img.shields.io/badge/Lenis-Smooth_Scroll-black?style=for-the-badge" alt="Lenis" /></a>
 </p>
 
+<p align="center">
+  <img src="./image.png" alt="Folioverze — software & tech agency landing page" width="100%" />
+</p>
+
 ```text
   _____ ___  _     ___ _____     _______ ____   __________ 
  |  ___/ _ \| |   |_ _/ _ \ \   / / ____|  _ \ |__  / ____|
@@ -67,6 +71,7 @@ npm run build && npm run start
 ```text
 Folioverze/
 ├── README.md
+├── image.png                 # Landing page preview (README)
 ├── assets/                   # Source design files (not served)
 │   ├── logo/                 # Brand logo SVGs (source for the generated icons)
 │   └── projects/             # Original project screenshots (e.g. Drokpa)
