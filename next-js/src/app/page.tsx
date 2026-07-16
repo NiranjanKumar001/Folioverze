@@ -67,7 +67,7 @@ class CustomSplitText {
         linesMap.forEach((spans) => {
           const lineDiv = document.createElement("div");
           lineDiv.className = options.linesClass || "line";
-          
+
           if (doChars) {
             spans.forEach(wordSpan => {
               const wordText = wordSpan.textContent || "";
@@ -89,7 +89,7 @@ class CustomSplitText {
             innerSpan.textContent = lineText;
             lineDiv.appendChild(innerSpan);
           }
-          
+
           el.appendChild(lineDiv);
           this.lines.push(lineDiv);
         });
@@ -1195,7 +1195,7 @@ export default function Home() {
 
         <div className="hero-main-content">
           <div className="header">
-            <h1>We build premium software, automations &amp; AI</h1>
+            <h1>We build premium software, automations &amp; AI for businesses</h1>
           </div>
 
           <div className="site-info">
@@ -1221,7 +1221,7 @@ export default function Home() {
         </div>
 
         <div className="section-heading">
-          <h2 className="reveal-text">SELECTED <br/> WORKS</h2>
+          <h2 className="reveal-text">SELECTED <br /> WORKS</h2>
           <p className="reveal-fade">(01) FEATURED PROJECT</p>
         </div>
 
@@ -1251,7 +1251,7 @@ export default function Home() {
       <div className="section-intersection-divider" id="services">
         <div className="divider-dots"></div>
         <div className="section-heading">
-          <h2 className="reveal-text">SERVICES &amp; <br/> EXPERTISE</h2>
+          <h2 className="reveal-text">SERVICES &amp; <br /> EXPERTISE</h2>
           <p className="reveal-fade">(02) WHAT WE DO</p>
         </div>
       </div>
@@ -1461,7 +1461,7 @@ export default function Home() {
       {/* Technologies Section */}
       <section className="info-section tech" id="tech">
         <div className="section-heading">
-          <h2 className="reveal-text">TECH WE <br/> BUILD WITH</h2>
+          <h2 className="reveal-text">TECH WE <br /> BUILD WITH</h2>
           <p className="reveal-fade">(03) STACK</p>
         </div>
         <div className="tech-groups">
@@ -1511,7 +1511,7 @@ export default function Home() {
       {/* Process Section */}
       <section className="info-section process" id="process">
         <div className="section-heading">
-          <h2 className="reveal-text">HOW WE <br/> WORK</h2>
+          <h2 className="reveal-text">HOW WE <br /> WORK</h2>
           <p className="reveal-fade">(04) PROCESS</p>
         </div>
         <div className="process-grid">
@@ -1541,7 +1541,7 @@ export default function Home() {
       {/* About Section */}
       <section className="info-section about" id="about">
         <div className="section-heading">
-          <h2 className="reveal-text">WHO WE <br/> ARE</h2>
+          <h2 className="reveal-text">WHO WE <br /> ARE</h2>
           <p className="reveal-fade">(05) STUDIO</p>
         </div>
         <div className="about-body">
@@ -1563,7 +1563,7 @@ export default function Home() {
       {/* Pricing Section */}
       <section className="info-section pricing" id="pricing">
         <div className="section-heading">
-          <h2 className="reveal-text">HOW TO <br/> WORK WITH US</h2>
+          <h2 className="reveal-text">HOW TO <br /> WORK WITH US</h2>
           <p className="reveal-fade">(06) ENGAGEMENT</p>
         </div>
         <div className="pricing-grid">
@@ -1650,7 +1650,7 @@ export default function Home() {
         <div className="contact-mesh"></div>
 
         <div className="section-heading">
-          <h2 className="reveal-text">GET IN <br/> TOUCH</h2>
+          <h2 className="reveal-text">GET IN <br /> TOUCH</h2>
           <p className="reveal-fade">(03) CONTACT</p>
         </div>
 
@@ -1716,7 +1716,7 @@ export default function Home() {
               </svg>
             </a>
           </div>
-          
+
           <div className="outro-scroll-top magnetic" id="back-to-top-btn">
             <span className="arrow-up">↑</span>
             <span className="text">Back to base</span>
