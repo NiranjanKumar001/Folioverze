@@ -1,7 +1,7 @@
-# <p align="center">✨ FOLIOVERZE | SENSORY DIGITAL STUDIO ✨</p>
+# <p align="center">✨ FOLIOVERZE | SOFTWARE & TECH AGENCY ✨</p>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Syne&weight=700&size=28&duration=3000&pause=1000&color=D7263D&center=true&vCenter=true&width=500&lines=WE+ENGINEER+SENSORY;DIGITAL+EXPERIENCES;FOLIOVERZE+STUDIO" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Syne&weight=700&size=28&duration=3000&pause=1000&color=D7263D&center=true&vCenter=true&width=520&lines=WE+BUILD+PREMIUM+SOFTWARE;AUTOMATIONS+AND+AI;FOLIOVERZE" alt="Typing SVG" />
 </p>
 
 <p align="center">
@@ -12,11 +12,6 @@
   <a href="#"><img src="https://img.shields.io/badge/Lenis-Smooth_Scroll-black?style=for-the-badge" alt="Lenis" /></a>
 </p>
 
-<p align="center">
-  <img src="./image.png" alt="Folioverze Project Overview" width="100%" />
-</p>
-
-
 ```text
   _____ ___  _     ___ _____     _______ ____   __________ 
  |  ___/ _ \| |   |_ _/ _ \ \   / / ____|  _ \ |__  / ____|
@@ -24,7 +19,7 @@
  |  _|| |_| | |___ | | |_| |\ V / | |___|  _ <  / /_| |___ 
  |_|   \___/|_____|___\___/  \_/  |_____|_| \_\/____|_____|
 
-               -- ＥＳＴ.  ２０２６  /  ＴＯＫＹＯ --
+               -- ＥＳＴ.  ２０２６  /  ＡＳＳＡＭ --
 ```
 
 ---
@@ -72,15 +67,18 @@ npm run build && npm run start
 ```text
 Folioverze/
 ├── README.md
-├── image.png                 # Project overview screenshot
-└── next-js/
+├── assets/                   # Source design files (not served)
+│   ├── logo/                 # Brand logo SVGs (source for the generated icons)
+│   └── projects/             # Original project screenshots (e.g. Drokpa)
+└── next-js/                  # The Next.js app (single source of truth)
     ├── src/app/
     │   ├── page.tsx          # Core GSAP timelines, physics loop & touch mapping
-    │   ├── globals.css       # Premium typography tokens & responsive layout
+    │   ├── globals.css       # Typography tokens & responsive layout
     │   ├── layout.tsx        # Root layout, metadata & fonts
-    │   ├── icon.svg          # Brand favicon (modern browsers)
-    │   └── favicon.ico       # Brand favicon (legacy)
-    └── public/               # video.mp4 + img1..15.webp creative assets
+    │   ├── icon.svg / favicon.ico / apple-icon.png / opengraph-image.png
+    │   ├── manifest.ts / robots.ts / sitemap.ts
+    │   └── privacy/          # Privacy Policy page
+    └── public/               # video.mp4 + img1..15.webp + logo-mark.svg + icons
 ```
 
 ---
