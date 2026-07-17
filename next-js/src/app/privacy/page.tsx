@@ -1,19 +1,31 @@
-"use client";
-
-import { useEffect } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
+import ScrollUnlock from "./ScrollUnlock";
 
 export const dynamic = "force-static";
 
-export default function PrivacyPage() {
-  // The root layout locks scroll for the home-page intro; release it here.
-  useEffect(() => {
-    document.documentElement.style.overflow = "auto";
-    document.body.style.overflow = "auto";
-  }, []);
+export const metadata: Metadata = {
+  title: "Privacy Policy | Folioverze",
+  description: "Read the Privacy Policy of Folioverze. Learn about how we handle user data with transparency and privacy.",
+  alternates: { canonical: "https://www.folioverze.com/privacy" },
+  openGraph: {
+    type: "website",
+    url: "https://www.folioverze.com/privacy",
+    siteName: "Folioverze",
+    title: "Privacy Policy | Folioverze",
+    description: "Read the Privacy Policy of Folioverze. Learn about how we handle user data with transparency and privacy.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy | Folioverze",
+    description: "Read the Privacy Policy of Folioverze. Learn about how we handle user data with transparency and privacy.",
+  },
+};
 
+export default function PrivacyPage() {
   return (
     <div className="legal-page">
+      <ScrollUnlock />
       <main className="legal">
         <Link href="/" className="legal-back">← Folioverze</Link>
 

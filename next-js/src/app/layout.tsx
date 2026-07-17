@@ -8,32 +8,49 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.folioverze.com"),
   alternates: { canonical: "https://www.folioverze.com" },
-  title: "Folioverze | Software & Tech Agency",
+  title: "Folioverze | Premium Software & Tech Agency",
   description:
-    "Folioverze is a freelance software & tech agency building premium websites, automations, AI integrations, and internal tools — from Assam, India.",
+    "Folioverze is a freelance software & tech agency building premium websites, custom automations, AI integrations, and internal tools. Based in Assam, India, serving clients worldwide.",
   keywords: [
     "software agency",
-    "web development",
-    "automation",
-    "AI integration",
-    "internal tools",
+    "web development agency",
+    "custom automation development",
+    "AI integration services",
+    "internal tools developer",
+    "freelance software engineer India",
+    "Next.js developer India",
+    "React developer Assam",
+    "hire software developers Guwahati",
     "Assam",
     "India",
     "Folioverze",
+    "premium web design",
   ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     type: "website",
     url: "https://www.folioverze.com",
     siteName: "Folioverze",
-    title: "Folioverze | Software & Tech Agency",
+    title: "Folioverze | Premium Software & Tech Agency",
     description:
-      "Premium websites, automations, AI integrations, and internal tools — built by a freelance software & tech agency from Assam, India.",
+      "Premium websites, custom automations, AI integrations, and internal tools — built by a freelance software & tech agency from Assam, India.",
+    locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Folioverze | Software & Tech Agency",
+    title: "Folioverze | Premium Software & Tech Agency",
     description:
-      "Premium websites, automations, AI integrations, and internal tools — from Assam, India.",
+      "Premium websites, custom automations, AI integrations, and internal tools — from Assam, India.",
   },
 };
 
